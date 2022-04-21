@@ -48,7 +48,7 @@ class TareaController {
 
   static lista(req, res) {    
     const { usuarioId, start, end } = req.body;   
-    console.log(req.body)    
+
     TareaService.getAll(usuarioId, start, end)
       .then((data) => {
         res.status(200).send({ result: data });

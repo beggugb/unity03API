@@ -22,7 +22,7 @@ class InformesController {
         res.status(200).send({ result: { xdata }});
       })  
       .catch((reason) => { 
-          console.log(reason)
+
           res.status(400).send({ message: reason });
       });
   }

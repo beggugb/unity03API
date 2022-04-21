@@ -69,8 +69,7 @@ class ContabilidadController {
     })
 
     engageGear.then(result => {
-      console.log(result) // Result from engageGear
-      console.log('Godspeed!')      
+       
       let iok  = result1.length
       let tt   = totales(result2)
       res.status(200).send({ result: tt, iok, result2  });

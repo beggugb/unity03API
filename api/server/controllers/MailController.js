@@ -114,7 +114,7 @@ class MailController {
           Promise.all([cotizacionesPdf(xitem,xitems,xempresa,observaciones)])  
           .then(([pdf]) => {
             xproveedores.map((itt)=>{
-              console.log(itt)
+            
               MailService.getCotizaciones(compraId,subject,xempresa,itt)
               .then((mail)=>{
                 console.log('pppp')    
@@ -146,7 +146,7 @@ class MailController {
     const { nombres, email, proveedorId, compraId, observaciones } = req.body
       Promise.all([CompraService.getItem(compraId),CompraItemsService.getItems(compraId)])
         .then(([xcompra,xitems])=>{   
-          console.log(xitems)   
+      
           EmpresaService.getSingle(1)
             .then((xempresa)=>{
               Promise.all([createPdfs(xcompra,xitems,nombres,email,observaciones)])           

@@ -60,7 +60,7 @@ class NotaController {
 
     static pagarCompra(req, res) {                           
         const { cuota, compraId, planId, monto, usuarioId, proveedor, observaciones, efectivo,banco, cheque } = req.body
-        console.log(req.body)
+   
         let d = new Date()
         let fpago  = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0]    
         var fGestion = d.getFullYear()                            
@@ -87,7 +87,7 @@ class NotaController {
                                 ComprobanteController.regPagoAut(monto,'Egreso',usuarioId,proveedor,observaciones,efectivo,banco,cheque)
                                ])    
                            .then(([item,items,iko])=>{
-                                console.log(iko)
+                              
                                 res.status(200).send({message:"pago realizado", result: {item, items } });      
                             })                               
                     

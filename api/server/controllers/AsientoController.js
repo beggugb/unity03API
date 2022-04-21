@@ -21,14 +21,14 @@ class AsientoController {
         ioks.fechaAsiento = fHoy           
         ComprobanteService.getItem(comprobanteId)
         .then((xcomprobante)=>{
-            console.log(xcomprobante)
+         
             AsientoService.setAdd(ioks)
             .then((xasiento) => {    
                 let ycomprobante = xcomprobante
                 ycomprobante.montoTotal = parseFloat(ycomprobante.montoTotal)+ parseFloat(debe)
                 ycomprobante.tDebe      = parseFloat(ycomprobante.tDebe) + parseFloat(debe)
                 ycomprobante.tHaber     = parseFloat(ycomprobante.tHaber) + parseFloat(haber)   
-                console.log(ycomprobante)
+            
                 ComprobanteService.setUpdate(ycomprobante,comprobanteId)
                 .then((yxcompro)=>{
                     Promise.all([ComprobanteService.getItem(comprobanteId),AsientoService.getData(comprobanteId)])

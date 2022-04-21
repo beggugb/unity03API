@@ -86,8 +86,7 @@ class ArticuloController {
 
   static getSearch(req, res) {    
     const { prop, value } = req.body      
-    console.log(prop)
-    console.log(value)
+ 
     ArticuloService.search(prop,value)
         .then((data) => {                
           let resData = data.data.map((item,index)=>{
@@ -173,17 +172,7 @@ class ArticuloController {
     } 
   }
   
-  /*static lista(req, res) {    
-    console.log('popopop')                       
-    ArticuloService.getList(req.params.name)
-        .then((articulos) => {                
-          res.status(200).send({message:"articulos lista", result: articulos });                                               
-        })                   
-        .catch((reason) => {  
-          console.log(reason)            
-          res.status(400).send({ message: reason });
-        });         
-  } */
+
   static lista(req, res) {        
     ArticuloService.getItemStock(req.params.name)
         .then((articulos) => {                

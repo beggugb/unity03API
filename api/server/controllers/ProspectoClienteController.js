@@ -6,7 +6,7 @@ class ProspectoClienteController {
   
   static crear(req, res) {        
      const { prospectoId } = req.body      
-     console.log(req.body)
+
     ProspectoClientesService.setAdd(req.body)
         .then((prospecto)=>{            
           Promise.all([ProspectoService.getItem(prospectoId),ProspectoClientesService.getList(prospectoId)])  

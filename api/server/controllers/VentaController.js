@@ -18,7 +18,7 @@ class VentaController {
         let fechaMes     = d.getMonth() + 1
 
         //crear la venta tipo pedido , estado pendiente
-        console.log(item)
+ 
         let newItem = item
         newItem.fechaVenta  = fechaVenta
         newItem.estado      = 'pendiente'
@@ -124,7 +124,7 @@ class VentaController {
                                         }
                                         return eok;
                                     })
-                                    console.log(items)
+                                   
                                     res.status(200).send({message:"ventas lista", result: {item, items }});
                                 }) 
                     }) 
@@ -223,7 +223,7 @@ class VentaController {
         //Mostrar Venta
         VentaService.getItemSingle(req.params.id)
             .then((xitem)=>{
-                console.log(xitem)
+             
                 if(xitem.estado === "cerrado")
                 {
                  Promise.all([VentaService.getItem(req.params.id),VentaItemsService.getItems(req.params.id),NotaCobranzaService.getKey("ventaId",req.params.id)])   
@@ -287,14 +287,7 @@ class VentaController {
         var fechaMes     = d.getMonth() + 1
         const { item, items, contado, banco, inicial,cuota,total, usuarioId } = req.body      
         
-        console.log(item)         
-        console.log(items)
-        console.log(contado)
-        console.log(banco)
-        console.log(inicial)
-        console.log(cuota)
-        console.log(total)
-        console.log(usuarioId)
+   
 
           //Verificar TDC
           TdcService.verificar()

@@ -42,7 +42,7 @@ class FileController {
       }
      
     static clientes(req, res) {
-      console.log(req.body)
+ 
         FileService.clientes(req, res)        
           .then((file) => {
             const art = {}
@@ -55,7 +55,7 @@ class FileController {
           })   
     }
     static clientesNit(req, res) {
-      console.log(req.body)
+  
         FileService.clientesNit(req, res)        
           .then((file) => {
             const art = {}
@@ -68,7 +68,7 @@ class FileController {
           })   
     }
     static clientesCi(req, res) {
-      console.log(req.body)
+  
         FileService.clientesCi(req, res)        
           .then((file) => {
             const art = {}

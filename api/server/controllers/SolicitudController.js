@@ -36,8 +36,7 @@ class SolicitudController {
       /** Crear Venta **/
     static crear(req, res) {   
         const { item, items } = req.body 
-        console.log(item)
-        console.log(items)
+   
         let d = new Date()
         let fechaVenta   = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
         let fechaAnio    = d.getFullYear()
@@ -51,7 +50,7 @@ class SolicitudController {
         newItem.gestion     = fechaAnio
         newItem.mes         = fechaMes
 
-        console.log(newItem)
+  
 
         VentaService.setAdd(newItem)
             .then((xitem)=>{                

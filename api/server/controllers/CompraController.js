@@ -267,7 +267,7 @@ class CompraController {
       var fechaGestion = d.getFullYear()
       var fechaMes     = d.getMonth() + 1
       const { item, items, contado, banco, inicial,cuota,total, usuarioId } = req.body      
-       console.log(item) 
+ 
         //Verificar TDC
         TdcService.verificar()
         .then((xtdc)=>{
@@ -327,7 +327,7 @@ class CompraController {
                                         .then(([xycompra,xyitems])=>{
                                              //Flow Items   
                                                 xyitems.map(it=>{    
-                                                  console.log(it)                                                                                            
+                                                                                                                                      
                                                   AlmacenItemsService.verificar(it.articuloId,1)  
                                                     .then((xite)=>{                                                                                                                
                                                         if(!xite)

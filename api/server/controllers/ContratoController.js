@@ -79,7 +79,7 @@ class ContratoController {
 
   static search(req, res) {  
     const { prop, value } = req.body   
-    console.log(prop, value)                      
+                      
     ContratoService.search(prop, value)
     .then((data)=>{
       let resData = data.data.map((item,index)=>{
@@ -119,15 +119,7 @@ class ContratoController {
   static getItem(req, res) {                           
     ContratoService.getItem(req.params.id)
         .then((contrato) => {       
-         /* console.log(contrato)
-          let iok = contrato
-            iok.salario = contrato.salario.nombre
-            iok.nombres = contrato.persona.nombres
-            iok.ci      = contrato.persona.ci
-            iok.materno = contrato.persona.materno
-            iok.paterno = contrato.persona.paterno
-            iok.horario = contrato.horario.nombre
-            iok.cargo   = contrato.cargo.nombre*/
+  
             res.status(200).send({message:"contrato item", result: contrato });
         })                   
         .catch((reason) => {                        

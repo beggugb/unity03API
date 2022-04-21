@@ -13,5 +13,6 @@ router.post('/lista', TdcController.lista);
 router.post('/', TdcController.add);
 router.get('/:id', TdcController.getItem);
 router.put('/:id/:tipo',TdcController.actualizar)
+router.post('/search/lista',TdcController.search)
 
 export default router;

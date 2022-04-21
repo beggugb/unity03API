@@ -4,6 +4,26 @@ const Op = Sequelize.Op;
 const { Tdc } = database;
 
 class TdcService {
+  static getHoy(){
+    return new Promise((resolve,reject) =>{
+      var fechaHoy = new Date()    
+      var fHoy = (new Date(fechaHoy + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0]  
+      var fGestion = fechaHoy.getFullYear()
+      Tdc.findOne({
+        raw: true,
+        nest: true,            
+        where :  {
+            [Op.and]: [
+                { start :{ [Op.eq]: fHoy }},
+                { gestion  :{ [Op.eq]: fGestion.toString()  }}
+            ] 
+        },
+        attributes: ["id","monto"], 
+      })
+        .then((row)=> resolve( row ))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
 
   static verificar(pky) {      
     var fechaHoy = new Date()    

@@ -2,10 +2,20 @@ import TdcService from "../services/TdcService";
 
 class TdcController {  
 
+  static search(req, res) {                            
+    TdcService.getHoy()
+        .then((data) => {                          
+          res.status(200).send({message:"tdcs lista", result: data });            
+        })                   
+        .catch((reason) => {              
+        
+          res.status(400).send({ message: reason });
+        });         
+  }
+
   static lista(req, res) {    
     const { start, end } = req.body;       
-    console.log(start)
-    console.log(end)
+
     TdcService.getAll(start, end)
       .then((data) => {
         res.status(200).send({ result: data });
