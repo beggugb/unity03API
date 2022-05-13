@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'ventaId',
         as: 'notacobranza',
       });
+      Venta.belongsTo(models.Almacen, {
+        foreignKey: 'almacenId',
+        as: 'almacen',
+      });
     }
   };
   Venta.init({
@@ -49,7 +53,8 @@ module.exports = (sequelize, DataTypes) => {
     totalDescuento: DataTypes.DECIMAL,
     origen: DataTypes.STRING,
     formaPago: DataTypes.STRING,
-    formaEntrega: DataTypes.STRING  
+    formaEntrega: DataTypes.STRING,
+    almacenId: DataTypes.INTEGER  
   }, {
     sequelize,
     modelName: 'Venta',

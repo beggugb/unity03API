@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'proveedorId',
         as: 'proveedor',
       });
+      Compra.belongsTo(models.Almacen, {
+        foreignKey: 'almacenId',
+        as: 'almacen',
+      });
       Compra.belongsTo(models.Usuario, {
         foreignKey: 'usuarioId',
         as: 'usuario',
@@ -22,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       Compra.hasMany(models.NotaCobranza, {
         foreignKey: 'compraId',
         as: 'notacobranza',
-      });
+      });      
     }
   };
   Compra.init({
@@ -34,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     observaciones: DataTypes.STRING,
     estado: DataTypes.STRING,
     proveedorId: DataTypes.INTEGER,
+    almacenId: DataTypes.INTEGER,
     usuarioId: DataTypes.INTEGER,
     proveedors: DataTypes.STRING,
     nroPagos: DataTypes.INTEGER,

@@ -83,7 +83,7 @@ class CategoriaController {
     static crear(req, res) {           
         CategoriaService.setAdd(req.body)
             .then((categoria)=>{
-              CategoriaService.getData(1,15,'id','asc')
+              CategoriaService.getData(1,15,'id','desc')
               .then((categorias) => {                
                   res.status(200).send({message:"categorias lista", result: categorias });                                               
               })                                  

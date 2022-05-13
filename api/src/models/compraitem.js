@@ -32,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     gestion: DataTypes.INTEGER,
     mes: DataTypes.INTEGER,
     subTotal:DataTypes.DECIMAL,
-    unidad: DataTypes.STRING 
+    unidad: DataTypes.STRING,
+    
   }, {
     sequelize,
     modelName: 'CompraItem',

@@ -113,7 +113,8 @@ class CotizacionController {
                         "totalGeneral"     : item.totalGeneral,
                         "observaciones"    : item.observaciones,
                         "estado"           : item.estado,
-                        "cliente"          : item.cliente.nombres,                        
+                        "cliente"          : item.cliente.nombres, 
+                        "email"            : item.cliente.email
                     }
                 return iok;
                 })  
@@ -137,7 +138,8 @@ class CotizacionController {
                             "totalGeneral"     : item.totalGeneral,
                             "observaciones"    : item.observaciones,
                             "estado"           : item.estado,
-                            "cliente"          : item.cliente.nombres                            
+                            "cliente"          : item.cliente.nombres,
+                            "email"            : item.cliente.email                            
                         }
                     return iok;
                     })  
@@ -200,7 +202,8 @@ class CotizacionController {
                                     "totalGeneral"     : item.totalGeneral,
                                     "observaciones"    : item.observaciones,
                                     "estado"           : item.estado,
-                                    "cliente"          : item.cliente.nombres                     
+                                    "cliente"          : item.cliente.nombres,
+                                    "email"            : item.cliente.email                     
                                     }
                                 return iok;
                                 })  

@@ -186,7 +186,7 @@ class VentaService {
               limit: num,              
               where :  { usuarioId: prop },
               order: [['id','DESC']],
-              attributes:["id","fechaVenta","tipo","total","observaciones","estado","estf","usuarioId"],              
+              attributes:["id","fechaVenta","tipo","totalGeneral","observaciones","estado","usuarioId"],              
               include:[
                   {model:Cliente,as:"cliente",attributes:["id","nombres"]},
                   {model:Usuario,as:"usuario",attributes:["id","nombres"]}
@@ -351,7 +351,7 @@ class VentaService {
             limit: num,              
             where :  { clienteId: prop },
             order: [['id','DESC']],
-            attributes:["id","fechaVenta","tipo","total","observaciones","estado","usuarioId"],                          
+            attributes:["id","fechaVenta","tipo","totalGeneral","observaciones","estado","usuarioId"],                          
           })
           .then((rows) => resolve({
             paginas: Math.ceil(rows.count / num),
@@ -385,7 +385,7 @@ class VentaService {
             { fechaVenta: { [Op.between]: [desde, hasta]}},
             { estado: "cerrado"}            
            ]},
-          attributes:["id","fechaVenta","tipo","total","observaciones","estado"],
+          attributes:["id","fechaVenta","tipo","totalGeneral","observaciones","estado"],
           include:[
             {model:Cliente,as:"cliente",attributes:["id","nombres"]},
             {

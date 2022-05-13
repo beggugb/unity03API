@@ -5,10 +5,8 @@ const { Caja, Usuario } = database;
 
 class CajaService {
   
-  static getData(pag,num,prop,rolId){
-    return new Promise((resolve,reject) =>{      
-      let iok = (rolId === 1 || rolId === '1' || rolId === 3 || rolId === '3') ? 0: prop 
-      console.log(iok)
+  static getData(pag,num,usuarioId,rolId){
+    return new Promise((resolve,reject) =>{            
       let page = parseInt(pag);
       let der = num * page - num;
         Caja.findAndCountAll({
@@ -18,7 +16,7 @@ class CajaService {
           limit: num,
           order: [['id','DESC']],                             
           where: {[Op.and]: [            
-            { usuarioId: { [(rolId === 1 || rolId === '1' || rolId === 3 || rolId === '3') ? Op.gt:Op.eq]: iok }},
+            { usuarioId: { [Op.eq]: usuarioId }}
            ]},
           include: [
             { model: Usuario,as: "usuario", attributes: ["id", "nombres"]}
@@ -84,14 +82,15 @@ class CajaService {
     }
   
   static getDetalle(desde,hasta,usuarioId){
-    return new Promise((resolve,reject) =>{         
+    return new Promise((resolve,reject) =>{    
+      let usuId = (usuarioId === '' || usuarioId === undefined || usuarioId === '' || usuarioId === 0) ? 0: usuarioId         
       Caja.findAndCountAll({
           raw:true,
           nest:true,          
           where: {[Op.and]: [
             { fechaCaja: { [Op.between]: [desde, hasta]}},
             /*{ estado: true},*/
-            { usuarioId: { [usuarioId === 0 ? Op.gt:Op.eq]: usuarioId}},
+            { usuarioId: { [usuId === 0 ? Op.gt:Op.eq]: usuId}},
            ]},
           /*attributes:["id","fechaCompra","tipo","total","observaciones","estado"],*/      
           attributes:["id","estado","montoInicial","montoEgreso","montoIngreso","montoFinal","fechaCierre","fechaCaja","usuarioId"],  

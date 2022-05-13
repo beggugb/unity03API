@@ -63,7 +63,7 @@ class TicketService {
     static setAdd(value){
         return new Promise((resolve,reject) =>{
             Ticket.create(value)
-            .then((row) => resolve( row ))
+            .then((row) => resolve( row.id ))
             .catch((reason)  => reject({ message: reason.message }))  
         })
     } 

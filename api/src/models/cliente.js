@@ -35,7 +35,9 @@ module.exports = (sequelize, DataTypes) => {
     grupo: DataTypes.STRING,
     personaContacto: DataTypes.STRING,
     cuentaBancario: DataTypes.STRING,
-    celular: DataTypes.STRING
+    celular: DataTypes.STRING,
+    latitude: DataTypes.DECIMAL,
+    longitude: DataTypes.DECIMAL
   }, {
     sequelize,
     modelName: 'Cliente',

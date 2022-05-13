@@ -6,9 +6,7 @@ const { Articulo, Marca, Categoria, Unidad, Modelo   } = database;
 class ArticuloService {
 
   static searchSingle(prop,value){    
-    return new Promise((resolve,reject) =>{                  
-      console.log(prop)
-      console.log(value)
+    return new Promise((resolve,reject) =>{                        
         Articulo.findAll({
             raw: true,
             nest: true,            
@@ -98,7 +96,7 @@ class ArticuloService {
         Articulo.findByPk(pky,{
           raw: true,
           nest: true,
-          attributes:["id","codigo","codigoBarras","nombre","nombreCorto","precioVenta","filename","descripcion"]
+          attributes:["id","codigo","codigo","nombre","nombreCorto","precioVenta","filename","descripcion"]
         })
         .then((row)=> resolve( row ))
         .catch((reason) => reject({ message: reason.message }))
@@ -109,7 +107,7 @@ class ArticuloService {
         Articulo.findByPk(pky,{
           raw: true,
           nest: true,
-          attributes:["id","codigoBarras","nombre","nm","nv","sma","smi"]
+          attributes:["id","codigo","precioVenta","nombre","nm","nv","sma","smi"]
         })
         .then((row)=> resolve( row ))
         .catch((reason) => reject({ message: reason.message }))
@@ -196,12 +194,12 @@ class ArticuloService {
     })
 } 
 
-    static verificar(codigoBarras) {      
+    static verificar(codigo) {      
         return new Promise((resolve, reject) => {        
           Articulo.findOne({
             raw: true,
             nest: true,            
-            where : { codigoBarras: {[Op.eq]: codigoBarras }}
+            where : { codigo: {[Op.eq]: codigo }}
           })           
             .then((result) => {                              
                 resolve(result)

@@ -40,31 +40,35 @@ import ventaitems from './ventaitemsRoutes'
 import pedidos from './pedidoRoutes'
 import solicitudes from './solicitudRoutes'
 import unidades from './unidadRoutes'
+import mobil from './mobilRoutes'
+import movimientos from './movimientoRoutes'
 
 export default(app) => {    
     app.use('/api/usuarios',usuarios);          
     app.use('/api/compras',KeyToken,compras);
     app.use('/api/ventas',KeyToken,ventas);
+    app.use('/api/movimientos',KeyToken,movimientos);
     app.use('/api/notas',KeyToken,notas);
     app.use('/api/empresas',KeyToken,empresas);
     app.use('/api/procesos',KeyToken,proceso);    
     app.use('/api/unidades',KeyToken,unidades);
     app.use('/api/clientes',KeyToken,clientes);
     app.use('/api/pedidos',KeyToken,pedidos);
+    app.use('/api/mobil',mobil);
     app.use('/api/solicitudes',KeyToken,solicitudes);
     app.use('/api/categorias',KeyToken,categorias);
     app.use('/api/marcas',KeyToken,marcas);
     app.use('/api/modelos',KeyToken,modelos);
-    app.use('/api/articulos',KeyToken,articulos);   
+    app.use('/api/articulos',articulos);   
     app.use('/api/mails',KeyToken,mails);    
-    app.use('/api/tpv',KeyToken,tpv);
-    app.use('/api/cajas',KeyToken,cajas);
+    app.use('/api/tpv',tpv);
+    app.use('/api/cajas',cajas);
     app.use('/api/cajasitems',KeyToken,cajasitems);    
     app.use('/api/cotizaciones',KeyToken,cotizacion);    
-    app.use('/api/almacenes',KeyToken,almacenes);
-    app.use('/api/proveedores',KeyToken,proveedores);
+    app.use('/api/almacenes',almacenes);
+    app.use('/api/proveedores',proveedores);
     app.use('/api/files',KeyToken,files);
-    app.use('/api/informes',KeyToken,informes);
+    app.use('/api/informes',informes);
     app.use('/api/pucs',KeyToken,pucs);
     app.use('/api/comprobantes',KeyToken,comprobantes);
     app.use('/api/asientos',KeyToken,asientos);

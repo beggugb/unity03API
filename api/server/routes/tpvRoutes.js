@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import TpvController from '../controllers/TpvController';
-import ArticuloController from '../controllers/ArticuloController';
 
 const router = Router();
 

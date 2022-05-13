@@ -42,8 +42,11 @@ router.post('/contabilidad',InformesController.contabilidad)
 //Clientes
 router.post('/estadocuentas',InformesController.estadoCuentas)
 
-/*
+//Cajas
 router.post('/cajas',InformesController.cajas)
+
+/*
+
 router.post('/pagos',InformesController.pagos)
 router.post('/articulos',InformesController.articulos)
 

@@ -35,7 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     stock: DataTypes.INTEGER,
     movimientoId: DataTypes.INTEGER,
     valor:DataTypes.NUMERIC,
-    categoriaId: DataTypes.INTEGER
+    categoriaId: DataTypes.INTEGER,
+    costo:DataTypes.DECIMAL 
   }, {
     sequelize,
     modelName: 'AlmacenItem',

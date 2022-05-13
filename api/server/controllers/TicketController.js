@@ -74,15 +74,19 @@ class TicketController {
       let iok = req.body
       let d            = new Date()      
       let fechaGestion = d.getFullYear() 
-      iok.gestion = fechaGestion
+      let fregistro    = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
+      iok.gestion       = fechaGestion
+      iok.fechaRegistro = fregistro
+      iok.fechaCierre   = fregistro      
         TicketService.setAdd(iok)
-            .then((ticket)=>{
-              TicketService.getData(1,15,'id','asc')
-              .then((tickets) => {                
-                  res.status(200).send({message:"tickets lista", result: tickets });                                               
+            .then((xitem)=>{
+              TicketService.getItem(xitem)
+              .then((ticket) => {                
+                  res.status(200).send({message:"tickets lista", result: ticket });                                               
               })                                  
             })                   
-            .catch((reason) => {              
+            .catch((reason) => {       
+              console.log(reason)       
               res.status(400).send({ message: reason });
             });         
     } 

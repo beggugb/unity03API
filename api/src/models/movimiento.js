@@ -31,7 +31,9 @@ module.exports = (sequelize, DataTypes) => {
   };
   Movimiento.init({
     origen: DataTypes.STRING,
+    origenId: DataTypes.INTEGER,
     destino: DataTypes.STRING,
+    destinoId: DataTypes.INTEGER,
     tipo: DataTypes.STRING,
     fecha: DataTypes.DATE,
     compraId: DataTypes.INTEGER,
@@ -40,7 +42,10 @@ module.exports = (sequelize, DataTypes) => {
     usuarioId: DataTypes.INTEGER,
     nroItems: DataTypes.INTEGER,
     gestion: DataTypes.INTEGER,
-    mes: DataTypes.INTEGER
+    mes: DataTypes.INTEGER,
+    totalGeneral: DataTypes.DECIMAL,
+    motivo: DataTypes.STRING,
+    estado: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Movimiento',

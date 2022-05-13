@@ -15,10 +15,10 @@ module.exports = (sequelize, DataTypes) => {
       Usuario.belongsTo(models.Rol, {
         foreignKey: 'rolId',
         as: 'rol',
-      });
-      Usuario.belongsTo(models.Sucursal, {
-        foreignKey: 'sucursalId',
-        as: 'sucursal',
+      });   
+      Usuario.belongsTo(models.Almacen, {
+        foreignKey: 'almacenId',
+        as: 'almacen',
       });
       
     }
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     estado: DataTypes.BOOLEAN,
     rolId: DataTypes.INTEGER,
-    sucursalId: DataTypes.INTEGER,
+    almacenId: DataTypes.INTEGER,
     isCajero: DataTypes.BOOLEAN
   }, {
     sequelize,

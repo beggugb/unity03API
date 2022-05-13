@@ -7,6 +7,9 @@ class AlmacenItemsService {
 
   static searchSingle(prop,value,almacenId){
     return new Promise((resolve,reject) =>{  
+      console.log(prop)
+      console.log(value)
+      console.log(almacenId)
        AlmacenItem.findAll({
         raw: true,
         nest: true,           
@@ -121,6 +124,24 @@ class AlmacenItemsService {
     })
   }
 
+  static getStockItems(articuloId){
+    return new Promise((resolve,reject) =>{      
+      AlmacenItem.findAll({
+          raw: true,
+          nest: true,   
+          attributes: ["almacenId","stock"],
+          include:[{ model:Almacen,as:"almacen",attributes:["id","ubicacion","nombre"]}],
+          where: {[Op.and]: [
+            { articuloId: articuloId },             
+            { stock: { [Op.gt]: 0}}, 
+            { almacenId: { [Op.lt]: 100}} 
+          ]},
+        })
+        .then((rows) => resolve(rows))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
 
   static getData(pag,num,name,codigo,almacenId,categoriaId,value){
     return new Promise((resolve,reject) =>{  
@@ -157,7 +178,7 @@ class AlmacenItemsService {
             where: {[Op.and]: [
               {categoriaId: {[Op.between]: [iCategoria,fCategoria]}},
               {nombre: { [Op.iLike]: iValue}},
-              {codigoBarras: { [Op.iLike]: iCodigo}}
+              {codigo: { [Op.iLike]: iCodigo}}
             ]},
             attributes:['id','precioOferta','inOferta','codigo','codigoBarras','nombreCorto','nombre','precioVenta','filename','categoriaId'],
             include:[
@@ -205,7 +226,7 @@ class AlmacenItemsService {
                   { articuloId: {[Op.eq]: articuloId }},
                 ] 
               },
-              attributes:["id","almacenId","articuloId","stock"]   
+              attributes:["id","almacenId","articuloId","stock","valor","costo"],   
           })           
             .then((result) => {                              
                 resolve(result)
@@ -219,7 +240,7 @@ class AlmacenItemsService {
     static getDetalle(almacenId,articuloId,categoriaId,value,rango,vrango){
       return new Promise((resolve,reject) =>{  
 
-        console.log(value)
+     
         
         let iStock     = 0;
         let fStock     = 5000;

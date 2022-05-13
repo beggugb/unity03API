@@ -50,6 +50,13 @@ class PlanService {
             .catch((reason)  => reject({ message: reason.message }))      
         })
     }
+    static setAddI(value){
+      return new Promise((resolve,reject) =>{
+        PlanPagos.create(value)
+          .then((row) => resolve(row.id))
+          .catch((reason)  => reject({ message: reason.message }))  
+      })
+  }
     static getItem(pky){
         return new Promise((resolve,reject) =>{
             PlanPagos.findByPk(pky,{

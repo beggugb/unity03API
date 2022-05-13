@@ -6,6 +6,7 @@ import PlanService from "../services/PlanService"
 import ComprobanteController from "./ComprobanteController";
 import TdcService from "../services/TdcService"
 import MovimientoService from "../services/MovimientoService"
+import MovimientoItemService from "../services/MovimientoItemService"
 
 class CompraController { 
 
@@ -26,6 +27,8 @@ class CompraController {
         newItem.mes         = fechaMes
         newItem.tipo        = 'compra'
         newItem.origen      = 'compra directa'
+        newItem.almacenId   = newItem.almacenId === 0 ? 1 : item.almacenId
+        newItem.proveedorId = newItem.proveedorId === 0 ? 1 : item.proveedorId      
 
         CompraService.setAdd(newItem)
             .then((xitem)=>{                
@@ -40,7 +43,9 @@ class CompraController {
                         "marca"      : it.marca,
                         "articuloId" : it.articuloId,
                         "gestion"    : fechaAnio,
-                        "mes"        : fechaMes
+                        "mes"        : fechaMes,
+                        "subTotal"   : it.subTotal,
+                        "unidad"     : it.unidad
                     }
                     return iok;
                 })
@@ -96,7 +101,8 @@ class CompraController {
                                             "compraId"   : it.compraId,                                            
                                             "cantidad"   : it.cantidad,
                                             "nombre"     : it.articulo.nombre,
-                                            "codigo"     : it.articulo.codigo
+                                            "codigo"     : it.articulo.codigo,
+                                            "unidad"     : it.unidad
                                         }
                                         return eok;
                                     })
@@ -114,6 +120,7 @@ class CompraController {
     /** Buscar Cormpra **/
     static search(req, res) {  
         const { prop, value, usuarioId, rolId } = req.body        
+        console.log(req.body)
         CompraService.search(prop,value,usuarioId,rolId,'compra')
             .then((data)=>{
                 let resData = data.data.map((item,index)=>{
@@ -121,6 +128,7 @@ class CompraController {
                     "id"            : item.id,   
                     "fechaCompra"   : item.fechaCompra,
                     "tipo"          : item.tipo,
+                    "origen"        : item.origen,
                     "totalGeneral"  : item.totalGeneral,
                     "observaciones" : item.observaciones,
                     "estado"        : item.estado,
@@ -130,7 +138,8 @@ class CompraController {
                 })  
                 res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
             })                  
-            .catch((reason) => {                            
+            .catch((reason) => { 
+                console.log(reason)                           
               res.status(400).send({ message: reason });
             });         
     }
@@ -145,6 +154,7 @@ class CompraController {
                         "fechaCompra"   : item.fechaCompra,
                         "tipo"          : item.tipo,
                         "origen"        : item.origen,
+                        "nroItems"      : item.nroItems,    
                         "totalGeneral"  : item.totalGeneral,
                         "observaciones" : item.observaciones,
                         "estado"        : item.estado,
@@ -266,8 +276,9 @@ class CompraController {
       let fechaCompra  = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0]      
       var fechaGestion = d.getFullYear()
       var fechaMes     = d.getMonth() + 1
-      const { item, items, contado, banco, inicial,cuota,total, usuarioId } = req.body      
- 
+      const { item, items, contado, banco, inicial,cuota,total, usuarioId } = req.body    
+      console.log(item)  
+        
         //Verificar TDC
         TdcService.verificar()
         .then((xtdc)=>{
@@ -280,10 +291,9 @@ class CompraController {
                 "saldoTotal"       :  item.total,
                 "fechaVencimiento" :  fechaCompra,
                 "cuotas"           :  item.nroPagos,       
-                "compraId"         :  req.params.id,                
+                "compraId"         :  item.id,                
                 "isVenta"          :  false,                
-                "mes"              :  fechaMes,  
-                "detalle"          :  "Nota de Compra Nro." + req.params.id 
+                "mes"              :  fechaMes                  
                 }    
                 NotaCobranzaService.setNota(xnota)
                 .then((xs)=>{
@@ -303,41 +313,24 @@ class CompraController {
                     })
                     //Crear Plan
                     PlanService.setAdd(xplan)
-                        .then((yplan)=>{
-                            //Registrar Movimiento
-                            let newMovimiento = {
-                                origen   : "Compra",
-                                destino  : "Almacen Central",
-                                tipo     : "Ingreso",
-                                fecha    : fechaCompra,
-                                mes      : fechaMes,
-                                anio     : fechaGestion,
-                                compraId : req.params.id,                                
-                                almacenId: 1,
-                                usuarioId: usuarioId,
-                                gestion: fechaGestion,
-                                mes: fechaMes
-                            }
-                            MovimientoService.setAdd(newMovimiento)
-                                .then((xmovimiento)=>{
-                                    //Registrar Items Almacen                                    
-                                    Promise.all([
-                                        CompraService.getItemSingle(req.params.id),
-                                        CompraItemsService.getList(req.params.id)])
-                                        .then(([xycompra,xyitems])=>{
+                      .then((yplan)=>{                                                             
+                        Promise.all([
+                            CompraService.getItemSingle(req.params.id),
+                            CompraItemsService.getList(req.params.id)])
+                                .then(([xycompra,xyitems])=>{
                                              //Flow Items   
-                                                xyitems.map(it=>{    
-                                                                                                                                      
-                                                  AlmacenItemsService.verificar(it.articuloId,1)  
+                                                xyitems.map(it=>{                                                                    
+                                                  AlmacenItemsService.verificar(it.articuloId,item.almacenId)  
                                                     .then((xite)=>{                                                                                                                
                                                         if(!xite)
                                                         {
                                                             let dt = {
                                                                 articuloId  : it.articuloId,
-                                                                almacenId   : 1,
+                                                                almacenId   : item.almacenId,
                                                                 stock       : it.cantidad,
                                                                 valor       : parseFloat(it.valor) * parseFloat(it.cantidad),
-                                                                categoriaId : it.articulo.categoriaId
+                                                                categoriaId : it.articulo.categoriaId,
+                                                                costo       : parseFloat(it.valor)
                                                                 }
                                                                 AlmacenItemsService.setAdd(dt)
                                                                     .then((iok)=>{ console.log('creado')})                                                            
@@ -345,24 +338,28 @@ class CompraController {
                                                             let dt = xite
                                                                 dt.stock = parseInt(xite.stock) + parseInt(it.cantidad)
                                                                 dt.valor = parseInt(dt.stock) * parseFloat(it.valor) 
+                                                                dt.costo = parseFloat(it.valor)
                                                                 AlmacenItemsService.setUpdate(dt,xite.id)
                                                                     .then((iok)=>{console.log('actualizado')})
                                                         }
                                                     })  
                                                   return;  
-                                                })
-                                            //Update Compra
+                                                })                                      
                                              let newCompra = xycompra
                                                  newCompra.estado          = "cerrado"
                                                  newCompra.fechaAprobacion = fechaCompra
-                                            //Registro Contabilidad, muestra DATA
+                                             let hhnota ={
+                                                id: xs, 
+                                                detalle :"Nota de Compra Nro." + xs + " ("+xycompra.observaciones+")" + "-" + xycompra.proveedors
+                                             }
                                             Promise.all([                                                
                                                 ComprobanteController.regComprobanteAut(total,contado,banco,inicial,cuota,'Egreso',xycompra.usuarioId,xycompra.proveedors,xycompra.observaciones),
-                                                CompraService.setUpdate(newCompra,req.params.id)
+                                                CompraService.setUpdate(newCompra,req.params.id),
+                                                NotaCobranzaService.setUpdate(hhnota,xs)                                               
                                             ])     
-                                                .then(([xcomprobante,xconta])=>{
+                                                .then(([xcomprobante,xconta,xyq])=>{                                                   
                                                     CompraService.getData(1,15,'compra')
-                                                    .then((ydata)=>{
+                                                    .then((ydata)=>{    
                                                         let resData = ydata.data.map((item,index)=>{
                                                             let iok = {
                                                             "id"             : item.id,   
@@ -391,13 +388,7 @@ class CompraController {
                                             res.status(400).send({ message: reason });
                                         });
                                     //Registrar Items Almacen
-                                })
-                                .catch((reason) => {              
-                                    console.log(reason)           
-                                    res.status(400).send({ message: reason });
-                                });
-                            
-                            //Registrar Movimiento
+                           
                         })
                         .catch((reason) => {              
                             console.log(reason)           

@@ -18,10 +18,10 @@ class UsuarioService {
           offset: der,
           limit: num,
           order: [[prop,value]],          
-          attributes:["id","nombres","estado"],
+          attributes:["id","nombres","estado","almacenId"],
           include:[
             {model:Rol,as:"rol",attributes:["id","nombre"]},
-            {model:Sucursal,as:"sucursal",attributes:["id","nombre"]}
+            {model:Almacen,as:"almacen",attributes:["id","nombre"]}
           ],
           where: { id: { [Op.gt]: 1 }}, 
         })
@@ -39,10 +39,9 @@ static login(username, password) {
     return new Promise((resolve, reject) => {
       Usuario.findOne({        
         where: { username: { [Op.eq]: username } },  
-        attributes: ['id','nombres','username','password','rolId','sucursalId','isCajero'],
+        attributes: ['id','nombres','username','password','rolId','almacenId','isCajero'],
         include:[
-          {model:Rol,as:"rol",attributes:["id","nombre"]},
-          {model:Sucursal,as:"sucursal",attributes:["id","nombre"]}
+          {model:Rol,as:"rol",attributes:["id","nombre"]}          
        ]
       }).then((user) => {
         if (!user) {          
@@ -81,7 +80,7 @@ static login(username, password) {
        Usuario.findByPk(pky,{
         raw: true,
         nest: true,
-        include:[ {model: Sucursal, as: "sucursal",attributes:['id','nombre']}]        
+        include:[ {model: Almacen, as: "almacen",attributes:['id','nombre']}]        
        })
         .then((item)=> resolve(item))
         .catch((reason) => reject({ message: reason.message }))      
@@ -94,7 +93,7 @@ static login(username, password) {
         raw: true,
         nest: true,
         attributes:['id','nombres'],
-        include:[ {model: Sucursal, as: "sucursal",attributes:['id','nombre']}]        
+        include:[ {model: Almacen, as: "almacen",attributes:['id','nombre']}]        
        })
         .then((item)=> resolve(item))
         .catch((reason) => reject({ message: reason.message }))      

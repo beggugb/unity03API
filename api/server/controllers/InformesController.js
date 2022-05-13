@@ -34,8 +34,8 @@ class InformesController {
       AlmacenItemsService.countArticulos(),
       AlmacenItemsService.sumArticulo(),
       AlmacenItemsService.countArticulo(),
-      MovimientoService.getListaDetalle(gestion,'Ingreso'),
-      MovimientoService.getListaDetalle(gestion,'Salida'),
+      MovimientoService.getListaDetalle(gestion,'Baja'),
+      MovimientoService.getListaDetalle(gestion,'Traspaso'),
       AlmacenItemsService.getRotacionArticulo()
 
     ])
@@ -53,7 +53,7 @@ class InformesController {
             itemsMinimo.push(item.articulo.smi)
             itemsActual.push(item.stock)          
           })
-
+          
           res.status(200).send({ result: { zporcentajes, zcantidades, yingresos,ysalidas,labelProductos, itemsMinimo, itemsActual}} );          
         })
         .catch((reason) => { 
@@ -78,8 +78,9 @@ class InformesController {
             "destino"       : it.destino,
             "nroItems"      : it.nroItems,
             "fecha"         : it.fecha,
-            "observaciones" : it.compra.observaciones,
-            "totalGeneral"  : it.compra.totalGeneral
+            "tipo"          : it.tipo,
+            "motivo"        : it.motivo,
+            "totalGeneral"  : it.totalGeneral
         }        
         return eok;
     })    
@@ -94,7 +95,9 @@ class InformesController {
 
   static existencias(req, res) {
     const { almacenId,articuloId,categoriaId,value,rango,vrango } = req.body;        
-             
+    
+    console.log(almacenId)
+
     AlmacenItemsService.getDetalle(almacenId,articuloId,categoriaId,value,rango,vrango)
     .then((detallex) => {        
       let sumaTotal  = 0      
@@ -108,6 +111,7 @@ class InformesController {
         "marca"        : item.articulo.marca.nombre,
         "categoria"    : item.articulo.categoria.nombre,
         "stock"        : item.stock,
+        "costo"        : item.costo,
         "articuloId"   : item.articuloId
         }
         sumaTotal  = sumaTotal + parseFloat(item.articulo.precioVenta)        
@@ -274,13 +278,13 @@ class InformesController {
               let iok = {
               "id"            : item.id,   
               "fechaVenta"    : item.fechaVenta,
-              "total"         : item.total,
+              "totalGeneral"  : item.totalGeneral,
               "observaciones" : item.observaciones,                  
               "cliente"       : item.cliente.nombres,
               "saldo"         : item.notacobranza.saldoTotal,                            
               "pago"          : item.notacobranza.pagoTotal
               }
-              montoTotal  = montoTotal + parseFloat(item.total)   
+              montoTotal  = montoTotal + parseFloat(item.totalGeneral)   
               pagoTotal   = pagoTotal + parseFloat(item.notacobranza.pagoTotal)   
               saldoTotal  = saldoTotal + parseFloat(item.notacobranza.saldoTotal)   
           return iok;
@@ -459,6 +463,44 @@ class InformesController {
         })
 
   }
+
+  static cajas(req, res) {
+    const { desde, hasta, usuarioId } = req.body;        
+    var dDesde = new Date(desde)
+    var dHasta = new Date(hasta)    
+    var fdesde = (new Date(dDesde + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
+    var fhasta = (new Date(dHasta + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0]     
+                 
+    CajaService.getDetalle(fdesde,fhasta,usuarioId)
+    .then((detallex) => {  
+      let egreso     = 0
+      let ingreso    = 0
+      let sumaTotal  = 0      
+      let detalle = detallex.data.map((item,index)=>{
+        let iok = {
+        "id"           : item.id,
+        "estado"       : item.estado,
+        "montoInicial" : item.montoInicial,
+        "montoEgreso"  : item.montoEgreso,
+        "montoIngreso" : item.montoIngreso,
+        "montoFinal"   : item.montoFinal,
+        "fechaCierre"  : item.fechaCierre,
+        "fechaCaja"    : item.fechaCaja,
+        "usuarioId"    : item.usuario.id,
+        "usuario"      : item.usuario.nombres
+        }
+        egreso     = egreso + parseFloat(item.montoEgreso)                
+        ingreso    = ingreso + parseFloat(item.montoIngreso)
+        sumaTotal  = sumaTotal + parseFloat(item.montoFinal)
+      return iok;
+      })
+      res.status(200).send({ result: { data:detalle, total:detallex.total, suma:sumaTotal, egreso:egreso, ingreso: ingreso } });       
+      })
+      .catch((reason) => {         
+       
+        res.status(400).send({ message: reason });
+      });
+  }
   /*
   static articulos(req, res) {   
     const { usuarioId, rolId, estado } = req.body    
@@ -538,42 +580,7 @@ class InformesController {
     
   }
 
-  static cajas(req, res) {
-    const { desde, hasta, usuarioId } = req.body;    
-
-    console.log(req.body)
-    
-    var dDesde = new Date(desde)
-    var dHasta = new Date(hasta)    
-    var fdesde = (new Date(dDesde + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
-    var fhasta = (new Date(dHasta + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0]     
-             
-    CajaService.getDetalle(fdesde,fhasta,usuarioId)
-    .then((detallex) => {  
-      let sumaTotal  = 0      
-      let detalle = detallex.data.map((item,index)=>{
-        let iok = {
-        "id"           : item.id,
-        "estado"       : item.estado,
-        "montoInicial" : item.montoInicial,
-        "montoEgreso"  : item.montoEgreso,
-        "montoIngreso" : item.montoIngreso,
-        "montoFinal"   : item.montoFinal,
-        "fechaCierre"  : item.fechaCierre,
-        "fechaCaja"    : item.fechaCaja,
-        "usuarioId"    : item.usuario.id,
-        "usuario"      : item.usuario.nombres
-        }
-        sumaTotal  = sumaTotal + parseFloat(item.montoFinal)        
-      return iok;
-      })
-      res.status(200).send({ result: { data:detalle, total:detallex.total, suma:sumaTotal } });       
-      })
-      .catch((reason) => {         
-       
-        res.status(400).send({ message: reason });
-      });
-  }
+  
 
  
   

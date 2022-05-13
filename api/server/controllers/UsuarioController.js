@@ -68,15 +68,8 @@ class UsuarioController {
 
   static getItem(req, res) {                           
     UsuarioService.getItem(req.params.id)
-        .then((usuario) => {                
-          ModuloService.getListSingle(usuario.rolId)
-          .then((modulos)=>{
-            res.status(200).send({message:"usuario item", result: { usuario, modulos } });
-          })
-          .catch((reason) => {                        
-            console.log(reason)
-            res.status(400).send({ message: reason });
-          });  
+        .then((usuario) => {                                              
+            res.status(200).send({message:"usuario item", result:  usuario });
         })                   
         .catch((reason) => {                        
           console.log(reason)
@@ -102,12 +95,12 @@ class UsuarioController {
       .then((user) => {          
         if(user.usuario){       
           Promise.all([
-            ModuloService.getList(user.usuario.rolId), 
-            AlmacenService.getItemSucursal(user.usuario.sucursalId),
-            EmpresaService.getSingles(1)
+            ModuloService.getList(user.usuario.rolId),             
+            EmpresaService.getSingles(1),
+            AlmacenService.getItem(user.usuario.almacenId)
           ])
-            .then(([modulos, almacen, empresa]) =>{                                               
-              res.status(200).send({ user,modulos, almacen, empresa });
+            .then(([modulos, empresa, almacen]) =>{                                               
+              res.status(200).send({ user,modulos, empresa, almacen });
             })        
         }else{
           console.log(user)

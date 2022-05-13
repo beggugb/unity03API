@@ -27,7 +27,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Articulo.init({
-    codigo: DataTypes.STRING,
+    codigo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
     codigoBarras: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -68,7 +72,8 @@ module.exports = (sequelize, DataTypes) => {
     ms: DataTypes.INTEGER,
     pr: DataTypes.INTEGER,
     nm: DataTypes.STRING,
-    nv: DataTypes.STRING
+    nv: DataTypes.STRING,
+    subcategoria: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Articulo',

@@ -1,7 +1,7 @@
 import database from "../../src/models";
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const { Compra, Proveedor, NotaCobranza, Usuario } = database;
+const { Almacen, Compra, Proveedor, NotaCobranza, Usuario } = database;
 
 class CompraService {
 
@@ -64,7 +64,7 @@ class CompraService {
         Compra.findByPk(pky,{
           raw: true,
           nest: true,   
-          attributes:["id","nro","fechaCompra","tipo","nroItems","totalGeneral","subTotal","impuesto","observaciones","estado","proveedorId","usuarioId","proveedors","nroPagos","fechaAprobacion","gestion","mes"]      
+          attributes:["id","nro","fechaCompra","tipo","nroItems","totalGeneral","subTotal","impuesto","observaciones","estado","proveedorId","usuarioId","proveedors","nroPagos","fechaAprobacion","gestion","mes"]          
         })
         .then((row)=> resolve( row ))
         .catch((reason) => reject({ message: reason.message }))
@@ -78,7 +78,8 @@ class CompraService {
           nest: true,
           include:[
             {model:Proveedor,as:"proveedor",attributes:["id","razonSocial","codigo","email"]},
-            {model:Usuario,as:"usuario",attributes:["id","nombres"]}
+            {model:Usuario,as:"usuario",attributes:["id","nombres"]},
+            {model:Almacen,as:"almacen",attributes:["id","nombre"]} 
         ]  
         })
         .then((row)=> resolve( row ))
@@ -97,12 +98,16 @@ static search(prop,value,usuarioId,rolId,tipo){
     let iok = (rolId === 1 || rolId === '1') ? 0: usuarioId
 
     if(prop === 'observaciones'){
-      iValue = (value === '--todos--' || value === null || value === '0') ? iValue = '%' : '%' + value + '%' 
+      iValue = (value === '--todos--' || value === null || value === '0' || value === '') ? iValue = '%' : '%' + value + '%' 
       pValue = '%'
     }else{
-      pValue = (value === '--todos--' || value === null || value === '0') ? pValue = '%' : '%' + value + '%' 
+      pValue = (value === '--todos--' || value === null || value === '0' || value === '') ? pValue = '%' : '%' + value + '%' 
       iValue = '%'
     }
+    console.log(iValue)
+    console.log(pValue)
+
+
     Compra.findAndCountAll({
         raw: true,
         nest: true,
@@ -113,12 +118,12 @@ static search(prop,value,usuarioId,rolId,tipo){
           { observaciones: { [Op.iLike]: iValue }}
          ]},
         order: [['id','DESC']],
-        attributes:["id","fechaCompra","tipo","totalGeneral","observaciones","estado"],              
+        attributes:["id","fechaCompra","origen","tipo","totalGeneral","observaciones","estado"],              
         include:[
           {model:Proveedor,
               as:"proveedor",
               attributes:["id","razonSocial"],
-              where: { razonSocial: { [Op.iLike]: pValue }},
+            /*  where: { razonSocial: { [Op.iLike]: pValue }},*/
 
           },
           {model:NotaCobranza,as:"notacobranza",attributes:["id","saldoTotal"]}

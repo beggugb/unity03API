@@ -3,6 +3,29 @@ import AlmacenItemsService from "../services/AlmacenItemsService"
 
 class ArticuloController { 
 
+  static getItem(req, res) {                           
+    Promise.all([
+      ArticuloService.getItem(req.params.id),
+      AlmacenItemsService.getStockItems(req.params.id)
+    ])  
+     .then(([articulo,data]) => {     
+      let existencias = data.map((item,index)=>{
+        let iok = {
+            "id"        : item.almacen.id,   
+            "almacen"   : item.almacen.nombre,
+            "direccion" : item.almacen.ubicacion,
+            "stock"     : item.stock            
+        }
+    return iok;
+    })          
+         res.status(200).send({message:"articulo item", result: {articulo:articulo,existencias:existencias} });                                               
+      })                   
+        .catch((reason) => {              
+          console.log(reason)
+          res.status(400).send({ message: reason });
+        });    
+  }
+
   static getDelete(req, res) {                    
     ArticuloService.delete(req.params.id)
         .then((articulo) => {                                    
@@ -108,16 +131,7 @@ class ArticuloController {
         }); 
   }
 
-  static getItem(req, res) {                           
-    ArticuloService.getItem(req.params.id)
-        .then((articulo) => {                
-            res.status(200).send({message:"articulo item", result: articulo });                                               
-        })                   
-        .catch((reason) => {              
-          console.log(reason)
-          res.status(400).send({ message: reason });
-        });         
-  }
+ 
 
   static getData(req, res) {                           
     ArticuloService.getData(req.params.pagina,req.params.num,req.params.prop,req.params.orden)
@@ -125,7 +139,7 @@ class ArticuloController {
           let resData = data.data.map((item,index)=>{
             let iok = {
                 "id"        : item.id,   
-                "codigo"    : item.codigoBarras,
+                "codigo"    : item.codigo,
                 "nombre"    : item.nombre,
                 "tipo"      : item.tipo,
                 "marca"     : item.marca.nombre,
@@ -173,7 +187,7 @@ class ArticuloController {
   }
   
 
-  static lista(req, res) {        
+  static lista(req, res) {           
     ArticuloService.getItemStock(req.params.name)
         .then((articulos) => {                
           res.status(200).send({message:"articulos lista", result: articulos });                                               
@@ -186,12 +200,12 @@ class ArticuloController {
     
 
     static crear(req, res) {           
-        const { codigoBarras } = req.body        
-          ArticuloService.verificar(codigoBarras)
+        const { codigo } = req.body
+        ArticuloService.verificar(codigo)
             .then((row) => {                
                 if(row)
                 {
-                  res.status(200).send({message:"el articulo ya existe", result: null });                          
+                  res.status(200).send({message:"el CÓDIGO  ya existe", result: null });                          
                 }else{
                   ArticuloService.setAdd(req.body)
                     .then((articulo)=>{                        
@@ -204,7 +218,8 @@ class ArticuloController {
             })                   
             .catch((reason) => {              
               res.status(400).send({ message: reason });
-            });         
+            });  
+       
     }  
     
 }

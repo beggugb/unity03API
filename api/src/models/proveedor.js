@@ -30,7 +30,9 @@ module.exports = (sequelize, DataTypes) => {
       formaPago: DataTypes.STRING,
       banco: DataTypes.INTEGER,
       cuenta: DataTypes.STRING,
-      observaciones: DataTypes.STRING	  
+      observaciones: DataTypes.STRING,
+      latitude: DataTypes.DECIMAL,
+      longitude: DataTypes.DECIMAL	  
   }, {
     sequelize,
     modelName: 'Proveedor',

@@ -27,8 +27,8 @@ class VentaController {
         newItem.mes         = fechaMes
         newItem.tipo        = 'venta'
         newItem.origen      = 'venta directa'
-
-
+        newItem.almacenId   = newItem.almacenId === 0 ? 1 : item.almacenId
+        newItem.clienteId   = newItem.clienteId === 0 ? 1 : item.clienteId
 
         VentaService.setAdd(newItem)
             .then((xitem)=>{                
@@ -44,7 +44,8 @@ class VentaController {
                         "articuloId" : it.articuloId,
                         "gestion"    : fechaAnio,
                         "mes"        : fechaMes,
-                        "subTotal"   : it.subTotal
+                        "subTotal"   : it.subTotal,
+                        "unidad"     : it.unidad
                     }
                     return iok;
                 })
@@ -55,11 +56,11 @@ class VentaController {
                             let items = xitems.map((it,index)=>{
                                 let eok = {
                                     "articuloId" : it.articuloId,
-                                    "valor"      : it.valor,                                    
+                                    "valor"      : it.valor,                                                                        
                                     "ventaId"    : it.ventaId,
-                                    "unidad"     : it.unidad,
-                                    "cantidad"   : it.cantidad,
                                     "subTotal"   : it.subTotal,
+                                    "unidad"     : it.unidad,
+                                    "cantidad"   : it.cantidad,                                    
                                     "nombre"     : it.articulo.nombre,
                                     "codigo"     : it.articulo.codigo
                                 }
@@ -85,29 +86,10 @@ class VentaController {
     }
     /** Actualizar Venta **/
     static actualizar(req, res) {       
-        const { item, items } = req.body 
-        let d = new Date()
-        let fechaVenta   = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
-        let fechaAnio    = d.getFullYear()
-        let fechaMes     = d.getMonth() + 1
-
-        let newItems = items.map((it,index)=>{
-            let iok = {
-                "ventaId"    : item.id,
-                "cantidad"   : it.cantidad,  
-                "codigo"     : it.codigo,
-                "valor"      : parseFloat(it.valor),                
-                "articuloId" : it.articuloId,
-                "gestion"    : fechaAnio,
-                "mes"        : fechaMes,
-                "subTotal"   : it.subTotal,
-                "unidad"     : it.unidad
-            }
-            return iok;
-        })                                    
+        const { item, items } = req.body                                  
           VentaItemsService.delete(item.id)
             .then((yitems) => {                                                         
-                Promise.all([VentaItemsService.setAdd(newItems),VentaService.setUpdate(item,item.id)])
+                Promise.all([VentaItemsService.setAdd(items),VentaService.setUpdate(item,item.id)])
                    .then((ucompra,uitems)=>{
                         Promise.all([VentaService.getItemSingle(item.id),VentaItemsService.getItems(item.id)])
                                 .then(([item, xitems]) =>{               
@@ -301,10 +283,9 @@ class VentaController {
                   "saldoTotal"       :  item.total,
                   "fechaVencimiento" :  fechaVenta,
                   "cuotas"           :  item.nroPagos,       
-                  "ventaId"          :  req.params.id,                
+                  "ventaId"          :  item.id,                
                   "isVenta"          :  true,                
-                  "mes"              :  fechaMes,  
-                  "detalle"          :  "Nota de Venta Nro." + req.params.id 
+                  "mes"              :  fechaMes                    
                   }    
                   NotaCobranzaService.setNota(xnota)
                   .then((xs)=>{
@@ -325,49 +306,40 @@ class VentaController {
                       //Crear Plan
                       PlanService.setAdd(xplan)
                           .then((yplan)=>{
-                              //Registrar Movimiento
-                              let newMovimiento = {
-                                  origen   : "Venta",
-                                  destino  : "Almacen Central",
-                                  tipo     : "Salida",
-                                  fecha    : fechaVenta,
-                                  mes      : fechaMes,
-                                  anio     : fechaGestion,
-                                  ventaId  : req.params.id,                                
-                                  almacenId: 1,
-                                  usuarioId: usuarioId
-                              }
-                              MovimientoService.setAdd(newMovimiento)
-                                  .then((xmovimiento)=>{
-                                      //Registrar Items Almacen
-                                      Promise.all([
-                                          VentaService.getItemSingle(req.params.id),
-                                          VentaItemsService.getList(req.params.id)])
-                                          .then(([xyventa,xyitems])=>{
+                              Promise.all([
+                                VentaService.getItemSingle(req.params.id),
+                                VentaItemsService.getList(req.params.id)])
+                                .then(([xyventa,xyitems])=>{
                                                //Flow Items   
                                                   xyitems.map(it=>{
-                                                    AlmacenItemsService.verificar(it.articuloId,1)  
+                                                    AlmacenItemsService.verificar(it.articuloId,item.almacenId)  
                                                       .then((xite)=>{
                                                         if(xite)
                                                         {
                                                             let dt = xite
-                                                              dt.stock = xite.stock - it.cantidad                                                                  
-                                                                AlmacenItemsService.setUpdate(dt, xite.id)
+                                                            dt.stock = xite.stock - it.cantidad                                                                  
+                                                            dt.valor = parseInt(dt.valor) - parseInt(it.valor) 
+                                                            dt.costo = parseFloat(it.valor)
+                                                            AlmacenItemsService.setUpdate(dt, xite.id)
                                                                     .then((iok)=>{ console.log('actualizado')})                                                            
                                                         }
                                                       })  
                                                     return;  
                                                   })
                                               //Update Venta
-                                               let newVenta = xyventa
+                                                let newVenta = xyventa
                                                    newVenta.estado          = "cerrado"
-                                                   newVenta.fechaAprobacion = fechaVenta
-                                              //Registro Contabilidad, muestra DATA
+                                                   newVenta.fechaAprobacion = fechaVenta     
+                                                let hhnota ={
+                                                    id: xs, 
+                                                    detalle :"Nota de Venta Nro." + xs + " ("+xyventa.observaciones+")" + "-" + xyventa.clients
+                                                }                                            
                                               Promise.all([                                                
                                                   ComprobanteController.regComprobanteVenta(total,contado,banco,inicial,cuota,'Ingreso',xyventa.usuarioId,xyventa.clients,xyventa.observaciones),                                                  
-                                                  VentaService.setUpdate(newVenta,req.params.id)
+                                                  VentaService.setUpdate(newVenta,req.params.id),
+                                                  NotaCobranzaService.setUpdate(hhnota,xs)  
                                               ])     
-                                                  .then(([xcomprobante,xconta])=>{
+                                                  .then(([xcomprobante,xconta,hhcx])=>{
                                                       VentaService.getData(1,15)
                                                       .then((ydata)=>{
                                                           let resData = ydata.data.map((item,index)=>{
@@ -384,7 +356,11 @@ class VentaController {
                                                           })
                             
                                                           res.status(200).send({message:"ventas lista", result: {data: resData, total: ydata.total, pagina: ydata.pagina,paginas:ydata.paginas} });     
-                                                      })                                                    
+                                                      })   
+                                                      .catch((reason) => {              
+                                                        console.log(reason)           
+                                                        res.status(400).send({ message: reason });
+                                                    });                                                 
                                                   }) 
                                                   .catch((reason) => {              
                                                       console.log(reason)           
@@ -396,14 +372,8 @@ class VentaController {
                                               console.log(reason)           
                                               res.status(400).send({ message: reason });
                                           });
-                                      //Registrar Items Almacen
-                                  })
-                                  .catch((reason) => {              
-                                      console.log(reason)           
-                                      res.status(400).send({ message: reason });
-                                  });
-                              
-                              //Registrar Movimiento
+                                      //Registrar Items Almacen                                  
+                               
                           })
                           .catch((reason) => {              
                               console.log(reason)           

@@ -31,7 +31,7 @@ class EmpresaService {
             Empresa.findByPk(pky,{
               raw: true,
               nest: true,
-              attributes:['id','nombre','pais','moneda','labelMoneda']
+              attributes:['id','nombre','pais','moneda','labelMoneda','licencia','fechaLicencia']
             })
             .then((row)=> resolve( row ))
             .catch((reason) => reject({ message: reason.message }))
