@@ -42,10 +42,12 @@ import solicitudes from './solicitudRoutes'
 import unidades from './unidadRoutes'
 import mobil from './mobilRoutes'
 import movimientos from './movimientoRoutes'
+import fichas from './fichaRoutes'
 
 export default(app) => {    
     app.use('/api/usuarios',usuarios);          
     app.use('/api/compras',KeyToken,compras);
+    app.use('/api/fichas',fichas);
     app.use('/api/ventas',KeyToken,ventas);
     app.use('/api/movimientos',KeyToken,movimientos);
     app.use('/api/notas',KeyToken,notas);

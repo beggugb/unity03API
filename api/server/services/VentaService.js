@@ -59,7 +59,7 @@ class VentaService {
           where: { gestion: gestion },
           attributes: [
           [Sequelize.fn('count',Sequelize.col('id')),'total'],
-          [Sequelize.fn('sum',Sequelize.col('total')),'suma']]                  
+          [Sequelize.fn('sum',Sequelize.col('totalGeneral')),'suma']]                  
         })
         .then((row) => resolve( row ))
         .catch((reason)  => reject({ message: reason.message }))  

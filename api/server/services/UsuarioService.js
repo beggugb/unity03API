@@ -7,42 +7,13 @@ const Op = Sequelize.Op;
 const { Usuario, Sucursal, Rol, Almacen } = database;
 
 class UsuarioService {
-
-  static getData(pag,num,prop,value){
-    return new Promise((resolve,reject) =>{
-      let page = parseInt(pag);
-      let der = num * page - num;
-        Usuario.findAndCountAll({
-          raw: true,
-          nest: true,
-          offset: der,
-          limit: num,
-          order: [[prop,value]],          
-          attributes:["id","nombres","estado","almacenId"],
-          include:[
-            {model:Rol,as:"rol",attributes:["id","nombre"]},
-            {model:Almacen,as:"almacen",attributes:["id","nombre"]}
-          ],
-          where: { id: { [Op.gt]: 1 }}, 
-        })
-        .then((rows) => resolve({
-          paginas: Math.ceil(rows.count / num),
-          pagina: page,
-          total: rows.count,
-          data: rows.rows
-        }))
-        .catch((reason) => reject({ message: reason.message }))
-    })
-  }  
-
-static login(username, password) {        
+  //Revisado 21-05-2022 
+  static login(username, password) {        
     return new Promise((resolve, reject) => {
       Usuario.findOne({        
         where: { username: { [Op.eq]: username } },  
-        attributes: ['id','nombres','username','password','rolId','almacenId','isCajero'],
-        include:[
-          {model:Rol,as:"rol",attributes:["id","nombre"]}          
-       ]
+        attributes: ['id','nombres','username','password','rolId','almacenId','isCajero','numCaja'],
+        include:[{model:Rol,as:"rol",attributes:["id","nombre"]}]
       }).then((user) => {
         if (!user) {          
           resolve({
@@ -75,6 +46,35 @@ static login(username, password) {
       });
     });
   }
+
+  static getData(pag,num,prop,value){
+    return new Promise((resolve,reject) =>{
+      let page = parseInt(pag);
+      let der = num * page - num;
+        Usuario.findAndCountAll({
+          raw: true,
+          nest: true,
+          offset: der,
+          limit: num,
+          order: [[prop,value]],          
+          attributes:["id","nombres","estado","almacenId"],
+          include:[
+            {model:Rol,as:"rol",attributes:["id","nombre"]},
+            {model:Almacen,as:"almacen",attributes:["id","nombre"]}
+          ],
+          where: { id: { [Op.gt]: 1 }}, 
+        })
+        .then((rows) => resolve({
+          paginas: Math.ceil(rows.count / num),
+          pagina: page,
+          total: rows.count,
+          data: rows.rows
+        }))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }  
+
+
   static getItem(pky){
     return new Promise((resolve,reject) =>{
        Usuario.findByPk(pky,{

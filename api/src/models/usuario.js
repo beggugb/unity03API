@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     estado: DataTypes.BOOLEAN,
     rolId: DataTypes.INTEGER,
     almacenId: DataTypes.INTEGER,
-    isCajero: DataTypes.BOOLEAN
+    isCajero: DataTypes.BOOLEAN,
+    numCaja: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Usuario',

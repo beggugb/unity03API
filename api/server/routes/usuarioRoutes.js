@@ -3,8 +3,8 @@ import UsuarioController from '../controllers/UsuarioController';
 import KeyToken from './keyToken'
 const router = Router();
 
+//Revisado 21-05-2022 
 router.post('/login', UsuarioController.login);
-
 router.get('/data/:pagina/:num/:prop/:orden',UsuarioController.getData)
 router.get('/item/:id',UsuarioController.getItem)
 router.put('/:id/:tipo',UsuarioController.actualizar)
