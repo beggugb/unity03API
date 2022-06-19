@@ -6,6 +6,31 @@ const { Ticket, Cliente,TicketItem, Usuario } = database;
 class TicketService {
 
   //Informe Tickets
+  static setAdd(value){
+    return new Promise((resolve,reject) =>{
+        Ticket.create(value)
+        .then((row) => resolve( row.id ))
+        .catch((reason)  => reject({ message: reason.message }))  
+    })
+}
+
+  static getLista(desde,hasta){
+    return new Promise((resolve,reject) =>{      
+        Ticket.findAll({
+          raw: true,
+          nest: true,   
+          where: {[Op.and]: [
+            { fechaRegistro: { [Op.between]: [desde, hasta]}},            
+           ]},       
+        })
+        .then((rows) => resolve(rows))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
+
+
+  //Informe Tickets
   static getTicketsRango(desde,hasta){
     return new Promise((resolve,reject) =>{        
       Ticket.findAndCountAll({
@@ -60,13 +85,7 @@ class TicketService {
         })
     }
     
-    static setAdd(value){
-        return new Promise((resolve,reject) =>{
-            Ticket.create(value)
-            .then((row) => resolve( row.id ))
-            .catch((reason)  => reject({ message: reason.message }))  
-        })
-    } 
+     
 
     static getData(pag,num,prop,value){
         return new Promise((resolve,reject) =>{
@@ -77,7 +96,8 @@ class TicketService {
               nest: true,
               offset: der,
               limit: num,
-              order: [[prop,value]]             
+              order: [[prop,value]],      
+              attributes:["id","fechaRegistro","clients","estado"]
             })
             .then((rows) => resolve({
               paginas: Math.ceil(rows.count / num),

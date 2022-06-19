@@ -5,47 +5,96 @@ const { Cliente } = database;
 
 class ClienteService {
 
-  //Informe Cliente
-  static getClientesRango(desde,hasta){
-    return new Promise((resolve,reject) =>{        
-      Cliente.findAndCountAll({
-          raw:true,
-          nest:true,          
-          where: {[Op.and]: [
-            { createdAt: { [Op.between]: [desde, hasta]}},            
-           ]},
-          attributes:["id","createdAt","codigo","pais","nombres","nit","email","telefono"]          
-        })
-        .then((rows) => resolve({                    
-          total: rows.count,
-          data: rows.rows          
-        }))
-        .catch((reason)  => reject({ message: reason.message }))  
-    })
-  }
-
-  static getTotal(){
+  /** Update Visual Paradingm */
+  static getItemSingle(pky){
     return new Promise((resolve,reject) =>{
-      Cliente.findOne({
-          raw:true,
-          nest:true,
-          attributes: [[Sequelize.fn('count',Sequelize.col('id')),'total']] 
+        Cliente.findByPk(pky,{
+          raw: true,
+          nest: true,
+          attributes:["id","codigo","nombres","email","tipo","telefono","pais","ciudad","direccion","nit"]
         })
-        .then((row) => resolve( row.total ))
+        .then((row)=> resolve( row ))
+        .catch((reason) => reject({ message: reason.message }))
+      })
+  }  
+
+  /** Update Visual Paradingm */
+  static getData(pag,num,prop,value){
+    return new Promise((resolve,reject) =>{
+      let page = parseInt(pag);
+      let der = num * page - num;
+        Cliente.findAndCountAll({
+          raw: true,
+          nest: true,
+          offset: der,
+          limit: num,
+          order: [[prop,value]],
+          attributes:["id","codigo","nombres","email","direccion","tipo","nit","filename","telefono"],
+          where: { id: { [Op.gt]: 1 }}, 
+        })
+        .then((rows) => resolve({
+          paginas: Math.ceil(rows.count / num),
+          pagina: page,
+          total: rows.count,
+          data: rows.rows
+        }))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+  
+  /** Update Visual Paradingm */
+  static getItem(pky){
+    return new Promise((resolve,reject) =>{
+        Cliente.findByPk(pky,{
+          raw: true,
+          nest: true
+        })
+        .then((row)=> resolve( row ))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
+  /** Update Visual Paradingm */
+  static setAdd(value){
+    return new Promise((resolve,reject) =>{
+        Cliente.create(value)
+        .then((row) => resolve( row ))
         .catch((reason)  => reject({ message: reason.message }))  
     })
   }
 
-
- 
+  /** Update Visual Paradingm */ 
   static delete(datoId) {
     return new Promise((resolve, reject) => {
       Cliente.destroy({ where: { id: Number(datoId) } })
         .then((rows) => resolve({ message: 'eliminado' }))
         .catch((reason)  => reject({ message: reason.message }))      
     });
-}
+  }
 
+  /** Update Visual Paradingm */ 
+  static setUpdate(value,id){
+    return new Promise((resolve,reject) =>{
+        Cliente.update(value, { where: { id: Number(id) } })
+        .then((row)=> resolve( row ))
+        .catch((reason) => reject({ message: reason.message })) 
+    })
+  }
+
+  /** Update Visual Paradingm */ 
+  static verificar(nit) {      
+    return new Promise((resolve, reject) => {        
+      Cliente.findOne({
+        raw: true,
+        nest: true,            
+        where : { nit: {[Op.eq]: nit }}
+      })           
+      .then((result) => { resolve(result)})
+        .catch((reason) => { reject({ message: reason.message })});             
+    });
+  }
+ 
+  /** Update Visual Paradingm */ 
   static search(prop,value){
     return new Promise((resolve,reject) =>{            
         let iValue = '%' + value + '%'
@@ -72,81 +121,59 @@ class ClienteService {
     .catch((reason)  => reject({ message: reason.message })) 
      })
    }
+  
+  /** Update Visual Paradingm */ 
+  static getTotal(){
+    return new Promise((resolve,reject) =>{
+      Cliente.findOne({
+          raw:true,
+          nest:true,
+          attributes: [[Sequelize.fn('count',Sequelize.col('id')),'total']] 
+        })
+        .then((row) => resolve( row.total ))
+        .catch((reason)  => reject({ message: reason.message }))  
+    })
+  }
 
-    static verificar(nit) {      
-        return new Promise((resolve, reject) => {        
-          Cliente.findOne({
-            raw: true,
-            nest: true,            
-              where : { nit: {[Op.eq]: nit }}
-          })           
-            .then((result) => {                              
-                resolve(result)
-            })
-            .catch((reason) => {                
-                reject({ message: reason.message })
-              });             
-        });
-      }
 
-    static getData(pag,num,prop,value){
-        return new Promise((resolve,reject) =>{
-          let page = parseInt(pag);
-          let der = num * page - num;
-            Cliente.findAndCountAll({
-              raw: true,
-              nest: true,
-              offset: der,
-              limit: num,
-              order: [[prop,value]],
-              attributes:["id","codigo","nombres","email","direccion","tipo","nit","filename","telefono"],
-              where: { id: { [Op.gt]: 1 }}, 
-            })
-            .then((rows) => resolve({
-              paginas: Math.ceil(rows.count / num),
-              pagina: page,
-              total: rows.count,
-              data: rows.rows
-            }))
-            .catch((reason) => reject({ message: reason.message }))
+/*
+
+
+  //Informe Cliente
+  static getClientesRango(desde,hasta){
+    return new Promise((resolve,reject) =>{        
+      Cliente.findAndCountAll({
+          raw:true,
+          nest:true,          
+          where: {[Op.and]: [
+            { createdAt: { [Op.between]: [desde, hasta]}},            
+           ]},
+          attributes:["id","createdAt","codigo","pais","nombres","nit","email","telefono"]          
         })
-    }
-    static getItem(pky){
-        return new Promise((resolve,reject) =>{
-            Cliente.findByPk(pky,{
-              raw: true,
-              nest: true
-            })
-            .then((row)=> resolve( row ))
-            .catch((reason) => reject({ message: reason.message }))
-        })
-    }   
-    static getItemSingle(pky){
-      return new Promise((resolve,reject) =>{
-          Cliente.findByPk(pky,{
-            raw: true,
-            nest: true,
-            attributes:["id","codigo","nombres","email","tipo","telefono","pais","ciudad","direccion","nit"]
-          })
-          .then((row)=> resolve( row ))
-          .catch((reason) => reject({ message: reason.message }))
-      })
-  }  
-    static setUpdate(value,id){
-        return new Promise((resolve,reject) =>{
-            Cliente.update(value, { where: { id: Number(id) } })
-            .then((row)=> resolve( row ))
-            .catch((reason) => reject({ message: reason.message })) 
-        })
-    }
+        .then((rows) => resolve({                    
+          total: rows.count,
+          data: rows.rows          
+        }))
+        .catch((reason)  => reject({ message: reason.message }))  
+    })
+  }
+
+  
+
+
+ 
+
+
+  
+
     
-    static setAdd(value){
-        return new Promise((resolve,reject) =>{
-            Cliente.create(value)
-            .then((row) => resolve( row ))
-            .catch((reason)  => reject({ message: reason.message }))  
-        })
-    }  
+
+    
+       
+    
+    
+    
+    
 /*    static getTotal(){
       return new Promise((resolve,reject) =>{
         Cliente.findOne({

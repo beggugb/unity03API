@@ -7,22 +7,41 @@ import PersonaService from "../services/PersonaService"
 
 class FileController {  
 
-    static proveedores(req, res) { 
-        FileService.proveedores(req, res)
-          .then((file) => {
-            const art = {}
-            art.filename = file.filename
-            ProveedorService.setUpdate(art, req.params.id)
-              .then((result) => {
-                    res.status(200).send({ result })
-                  })
+  /** Update Visual Paradingm */
+  static proveedores(req, res) { 
+    FileService.proveedores(req, res)
+    .then((file) => {
+      const art = {}
+        art.filename = file.filename
+        ProveedorService.setUpdate(art, req.params.id)
+          .then((result) => {
+              res.status(200).send({ result })
           })
-          .catch(reason => {
+    })
+    .catch(reason => {
        
-            res.status(400).send({ 'message': reason })
-          })
+        res.status(400).send({ 'message': reason })
+    })
    
-      }	
+  }	
+  /** Update Visual Paradingm */
+  static fundempresa(req, res) { 
+    FileService.fundempresa(req, res)
+    .then((file) => {
+      const art = {}
+        art.fundempresa = file.filename
+        ProveedorService.setUpdate(art, req.params.id)
+          .then((result) => {
+              res.status(200).send({ result })
+          })
+    })
+    .catch(reason => {
+       
+        res.status(400).send({ 'message': reason })
+    })
+   
+  }	
+
 
     static articulos(req, res) {      
         FileService.articulos(req, res)

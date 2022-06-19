@@ -2,19 +2,64 @@ import CargoService from "../services/CargoService";
 
 class CargoController {  
 
-    static getDelete(req, res) {                           
-        CargoService.delete(req.params.id)
-            .then((cargo) => {                                    
-                CargoService.getData(1,15,'id','DESC')
-                  .then((cargos) => {                
-                      res.status(200).send({message:"cargo eliminada", result: cargos });                                               
-                })          
-            })                   
-            .catch((reason) => {              
-          
-              res.status(400).send({ message: reason });
-            });         
-      }
+  /** Update Visual Paradingm */
+  static getData(req, res) {                           
+    CargoService.getData(req.params.pagina,req.params.num,req.params.prop,req.params.orden)
+      .then((data)=>{            
+        let resData = data.data.map((item,index)=>{
+            let iok = {
+            "id"           : item.id,   
+            "nombre"       : item.nombre,
+            "departamento" : item.departamento.nombre                               
+            }
+        return iok;
+        })  
+        res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
+      })                   
+      .catch((reason) => { res.status(400).send({ message: reason }); });         
+  }
+  
+  /** Update Visual Paradingm */
+  static crear(req, res) {           
+    CargoService.setAdd(req.body)
+      .then((cargo)=>{
+        CargoService.getData(1,15,'nombre','asc')
+          .then((data)=>{
+            let resData = data.data.map((item,index)=>{
+                let iok = {
+                "id"        : item.id,   
+                "nombre"    : item.nombre,
+                "departamento" : item.departamento.nombre
+                }
+            return iok;
+            })  
+            res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
+          })                                  
+        })                   
+        .catch((reason) => { res.status(400).send({ message: reason }); });         
+  } 
+
+  /** Update Visual Paradingm */
+  static getDelete(req, res) {                           
+    CargoService.delete(req.params.id)
+      .then((cargo) => {                                    
+        CargoService.getData(1,15,'nombre','asc')
+          .then((data)=>{
+            let resData = data.data.map((item,index)=>{
+                let iok = {
+                "id"           : item.id,   
+                "nombre"       : item.nombre,
+                "departamento" : item.departamento.nombre
+                }
+            return iok;
+            })  
+            res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
+          })         
+      })                   
+      .catch((reason) => {              
+        res.status(400).send({ message: reason });
+      });         
+  }
 
     static search(req, res) {  
         const { prop, value } = req.body                         
@@ -38,24 +83,23 @@ class CargoController {
     
       static actualizar(req, res) {                           
         CargoService.setUpdate(req.body,req.params.id)
-            .then((xcargo) => {                
-                CargoService.getData(1,15,'id','asc')
-                .then((data)=>{
-                  let resData = data.data.map((item,index)=>{
+          .then((xcargo) => {                
+            CargoService.getData(1,15,'nombre','asc')
+              .then((data)=>{
+                let resData = data.data.map((item,index)=>{
                       let iok = {
-                      "id"        : item.id,   
-                      "nombre"    : item.nombre,
-                      "salario"   : item.salario.nombre               
+                      "id"           : item.id,   
+                      "nombre"       : item.nombre,
+                      "departamento" : item.departamento.nombre
                       }
                   return iok;
                   })  
                   res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
-                })            
-            })                   
-            .catch((reason) => {              
-            
-              res.status(400).send({ message: reason });
-            });         
+                })           
+          })                   
+          .catch((reason) => {                          
+            res.status(400).send({ message: reason });
+          });         
       }
 
     static getItem(req, res) {                           
@@ -68,23 +112,7 @@ class CargoController {
               res.status(400).send({ message: reason });
             });         
       }
-      static getData(req, res) {                           
-        CargoService.getData(req.params.pagina,req.params.num,req.params.prop,req.params.orden)
-          .then((data)=>{
-            let resData = data.data.map((item,index)=>{
-                let iok = {
-                "id"        : item.id,   
-                "nombre"    : item.nombre,
-                "salario"   : item.salario.nombre               
-                }
-            return iok;
-            })  
-            res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
-          })                   
-            .catch((reason) => {              
-              res.status(400).send({ message: reason });
-            });         
-      }
+      
 
 
 
@@ -100,26 +128,7 @@ class CargoController {
     
 
 
-    static crear(req, res) {           
-        CargoService.setAdd(req.body)
-            .then((cargo)=>{
-              CargoService.getData(1,15,'id','asc')
-              .then((data)=>{
-                let resData = data.data.map((item,index)=>{
-                    let iok = {
-                    "id"        : item.id,   
-                    "nombre"    : item.nombre,
-                    "salario"   : item.salario.nombre               
-                    }
-                return iok;
-                })  
-                res.status(200).send({message:"compras lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} }); 
-              })                                  
-            })                   
-            .catch((reason) => {              
-              res.status(400).send({ message: reason });
-            });         
-    } 
+    
 
 
 

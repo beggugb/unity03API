@@ -40,7 +40,9 @@ module.exports = (sequelize, DataTypes) => {
     personaId: DataTypes.INTEGER,
     horarioId: DataTypes.INTEGER,
     salarioId: DataTypes.INTEGER,
-    cargoId: DataTypes.INTEGER
+    cargoId: DataTypes.INTEGER,
+    estado:DataTypes.BOOLEAN,
+    gestion: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Contrato',

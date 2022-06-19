@@ -62,7 +62,9 @@ class PersonaController {
   }
 
   static search(req, res) {  
-    const { prop, value } = req.body                         
+    const { prop, value } = req.body     
+    console.log(prop)                    
+    console.log(value)                    
     PersonaService.search(prop, value)
         .then((data) => {                          
           res.status(200).send({message:"personas lista", result: data });            

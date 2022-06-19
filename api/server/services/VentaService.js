@@ -5,6 +5,56 @@ const { Venta, Cliente, Usuario, NotaCobranza } = database;
 
 class VentaService {
 
+  /** Update Visual Paradingm */
+  static getVentasActivas(clienteId){     
+    return new Promise((resolve,reject) =>{      
+        Venta.findAll({
+          raw: true,
+          nest: true,                    
+          where: {[Op.and]:[
+            { clienteId: clienteId },
+           /* { estado: 'pendiente'}*/
+          ]},
+          order: [['id','asc']],
+          attributes:["id","total","estado","fechaVenta","observaciones"],
+          include:[{
+            model:NotaCobranza,
+            as:"notacobranza",
+            attributes:["id","cuotas","tipo","saldoTotal","montoTotal","saldoTotal","pagoTotal"]
+          }] 
+        })
+        .then((rows) => resolve(rows))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
+  /** Update Visual Paradingm */
+  static dataCliente(pag,num,prop,value){     
+    return new Promise((resolve,reject) =>{
+      let page = parseInt(pag);
+      let der = num * page - num;
+        Venta.findAndCountAll({
+          raw: true,
+          nest: true,
+          offset: der,
+          limit: num,              
+          where :  { clienteId: prop },
+          order: [['id','DESC']],
+          attributes:["id","fechaVenta","tipo","totalGeneral","observaciones","estado","usuarioId"],                          
+        })
+        .then((rows) => resolve({
+          paginas: Math.ceil(rows.count / num),
+          pagina: page,
+          total: rows.count,
+          data: rows.rows
+        }))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
+
+
+
   //Return <--
   static setAdd(dato){
     return new Promise((resolve,reject) =>{
@@ -29,27 +79,7 @@ class VentaService {
   }
 
 
-  static getVentasActivas(clienteId){     
-    return new Promise((resolve,reject) =>{      
-        Venta.findAll({
-          raw: true,
-          nest: true,                    
-          where: {[Op.and]:[
-            { clienteId: clienteId },
-           /* { estado: 'pendiente'}*/
-          ]},
-          order: [['id','asc']],
-          attributes:["id","total","estado","fechaVenta","observaciones"],
-          include:[{
-            model:NotaCobranza,
-            as:"notacobranza",
-            attributes:["id","cuotas","tipo","saldoTotal","montoTotal","saldoTotal","pagoTotal"]
-          }] 
-        })
-        .then((rows) => resolve(rows))
-        .catch((reason) => reject({ message: reason.message }))
-    })
-  }
+  
 
   static getTotal(gestion){
     return new Promise((resolve,reject) =>{      
@@ -340,28 +370,7 @@ class VentaService {
       })
     }
 
-    static dataCliente(pag,num,prop,value){     
-      return new Promise((resolve,reject) =>{
-        let page = parseInt(pag);
-        let der = num * page - num;
-          Venta.findAndCountAll({
-            raw: true,
-            nest: true,
-            offset: der,
-            limit: num,              
-            where :  { clienteId: prop },
-            order: [['id','DESC']],
-            attributes:["id","fechaVenta","tipo","totalGeneral","observaciones","estado","usuarioId"],                          
-          })
-          .then((rows) => resolve({
-            paginas: Math.ceil(rows.count / num),
-            pagina: page,
-            total: rows.count,
-            data: rows.rows
-          }))
-          .catch((reason) => reject({ message: reason.message }))
-      })
-  }
+    
   static getVentasRango(desde,hasta,estado){
     return new Promise((resolve,reject) =>{  
       let iSaldo = 0

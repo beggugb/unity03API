@@ -15,9 +15,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   Salario.init({
     nombre: DataTypes.STRING,
-    monto: DataTypes.NUMERIC,
-    montoHora: DataTypes.NUMERIC,
-    montoMinutos: DataTypes.NUMERIC
+    monto: DataTypes.DECIMAL,
+    montoHora: DataTypes.DECIMAL,
+    montoDia: DataTypes.DECIMAL,
+    montoMinutos: DataTypes.DECIMAL
   }, {
     sequelize,
     modelName: 'Salario',

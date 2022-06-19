@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       telefono: DataTypes.STRING,
       nit: DataTypes.STRING,
       filename: DataTypes.STRING,
+      fundempresa: DataTypes.STRING,
       formaPago: DataTypes.STRING,
       banco: DataTypes.INTEGER,
       cuenta: DataTypes.STRING,

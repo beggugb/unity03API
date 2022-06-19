@@ -1,9 +1,35 @@
 import database from "../../src/models";
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const { Cargo, Salario } = database;
+const { Cargo, Salario, Departamento } = database;
 
 class CargoService {
+
+  static getCargos(){        
+    return new Promise((resolve,reject) =>{  
+        Cargo.findAll({
+          raw: true,
+          nest: true,                
+          order: [['nombre','ASC']],
+          attributes: ["id", "nombre","departamentoId"]
+          })
+        .then((row) => resolve(row))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  } 
+
+  static getItems(departamentoId){        
+    return new Promise((resolve,reject) =>{  
+        Cargo.findAll({
+          raw: true,
+          nest: true,                
+          order: [['nombre','ASC']],          
+          where :{departamentoId: departamentoId },
+          })
+        .then((row) => resolve(row))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
 
     static getItem(pky){
         return new Promise((resolve,reject) =>{
@@ -42,7 +68,8 @@ class CargoService {
               limit: num,
               order: [[prop,value]],
               include: [
-                { model: Salario,as: "salario", attributes: ["id", "nombre"]}
+                { model: Salario,as: "salario", attributes: ["id", "nombre"]},
+                { model: Departamento,as: "departamento", attributes: ["id", "nombre"]}
               ]
             })
             .then((rows) => resolve({
@@ -102,7 +129,7 @@ class CargoService {
       .catch((reason)  => reject({ message: reason.message })) 
        })
      }
-
+/*
     static getItems(categoriaId){        
         return new Promise((resolve,reject) =>{
             let iCategoria = categoriaId
@@ -121,7 +148,7 @@ class CargoService {
             .then((row) => resolve(row))
             .catch((reason) => reject({ message: reason.message }))
         })
-    } 
+    } */
     
 }
 export default CargoService;

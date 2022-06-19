@@ -5,6 +5,62 @@ const { Almacen, AlmacenItem, Articulo, Marca, Categoria, Unidad   } = database;
 
 class AlmacenItemsService {
 
+  /** Update Visual Paradingm */
+  static getData(pag,num,name,codigo,almacenId,categoriaId,value){
+    return new Promise((resolve,reject) =>{  
+      let page = parseInt(pag);
+      let der = num * page - num;  
+      let iStock     = 0;
+      let fStock     = 5000;
+      
+      let iCategoria = categoriaId
+      let fCategoria = categoriaId
+
+      let iValue  = '%' + name + '%'
+      let iCodigo = '%' + codigo + '%'
+      
+      if(name === '--todos--' || name === null || name === '0') { iValue = '%' }            
+      if(codigo === '--todos--' || codigo === null || codigo === 0 || codigo === '0') { iCodigo = '%' }   
+      if(value === 0) { iStock = 0, fStock = 0 }
+      if(value === 1) { iStock = 1, fStock = 5000 }     
+      if(categoriaId === 0 || categoriaId === '0' || categoriaId === 'undefined' ) 
+      { iCategoria = 0, fCategoria = 5000 }     
+
+
+       AlmacenItem.findAndCountAll({
+        raw: true,
+        nest: true,           
+        offset: der,
+        limit: num,   
+        where: {[Op.and]: [
+          { almacenId: almacenId },             
+          { stock: { [Op.between]: [iStock, fStock]}},     
+        ]},   
+          include: [{ 
+            model: Articulo, as: "articulo",            
+            where: {[Op.and]: [
+              {categoriaId: {[Op.between]: [iCategoria,fCategoria]}},
+              {nombre: { [Op.iLike]: iValue}},
+              {codigo: { [Op.iLike]: iCodigo}}
+            ]},
+            attributes:['id','precioOferta','inOferta','codigo','codigoBarras','nombreCorto','nombre','precioVenta','filename','categoriaId'],
+            include:[
+              {model:Marca,as:"marca",attributes:["id","nombre"]}
+            ]
+            }]  
+  
+       })
+        .then((rows)=> resolve({
+          paginas: Math.ceil(rows.count / num),
+          pagina: page,
+          total: rows.count,
+          data: rows.rows
+        } ))
+        .catch((reason) => reject({ message: reason.message }))      
+    })
+  }
+
+
   static searchSingle(prop,value,almacenId){
     return new Promise((resolve,reject) =>{  
       console.log(prop)
@@ -143,59 +199,7 @@ class AlmacenItemsService {
   }
 
 
-  static getData(pag,num,name,codigo,almacenId,categoriaId,value){
-    return new Promise((resolve,reject) =>{  
-      let page = parseInt(pag);
-      let der = num * page - num;  
-      let iStock     = 0;
-      let fStock     = 5000;
-      
-      let iCategoria = categoriaId
-      let fCategoria = categoriaId
-
-      let iValue  = '%' + name + '%'
-      let iCodigo = '%' + codigo + '%'
-      
-      if(name === '--todos--' || name === null || name === '0') { iValue = '%' }            
-      if(codigo === '--todos--' || codigo === null || codigo === 0 || codigo === '0') { iCodigo = '%' }   
-      if(value === 0) { iStock = 0, fStock = 0 }
-      if(value === 1) { iStock = 1, fStock = 5000 }     
-      if(categoriaId === 0 || categoriaId === '0' || categoriaId === 'undefined' ) 
-      { iCategoria = 0, fCategoria = 5000 }     
-
-
-       AlmacenItem.findAndCountAll({
-        raw: true,
-        nest: true,           
-        offset: der,
-        limit: num,   
-        where: {[Op.and]: [
-          { almacenId: almacenId },             
-          { stock: { [Op.between]: [iStock, fStock]}},     
-        ]},   
-          include: [{ 
-            model: Articulo, as: "articulo",            
-            where: {[Op.and]: [
-              {categoriaId: {[Op.between]: [iCategoria,fCategoria]}},
-              {nombre: { [Op.iLike]: iValue}},
-              {codigo: { [Op.iLike]: iCodigo}}
-            ]},
-            attributes:['id','precioOferta','inOferta','codigo','codigoBarras','nombreCorto','nombre','precioVenta','filename','categoriaId'],
-            include:[
-              {model:Marca,as:"marca",attributes:["id","nombre"]}
-            ]
-            }]  
   
-       })
-        .then((rows)=> resolve({
-          paginas: Math.ceil(rows.count / num),
-          pagina: page,
-          total: rows.count,
-          data: rows.rows
-        } ))
-        .catch((reason) => reject({ message: reason.message }))      
-    })
-  }
 
  
     

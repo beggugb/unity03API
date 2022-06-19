@@ -5,14 +5,20 @@ const { Proveedor } = database;
 
 class ProveedorService {
 
-  static delete(datoId) {
-    return new Promise((resolve, reject) => {
-      Proveedor.destroy({ where: { id: Number(datoId) } })
-        .then((rows) => resolve({ message: 'eliminado' }))
-        .catch((reason)  => reject({ message: reason.message }))      
+  /** Update Visual Paradingm */ 
+  static verificar(nit) {      
+    return new Promise((resolve, reject) => {        
+      Proveedor.findOne({
+        raw: true,
+        nest: true,            
+        where : { nit: {[Op.eq]: nit }}
+      })           
+      .then((result) => { resolve(result)})
+        .catch((reason) => { reject({ message: reason.message })});             
     });
   }
-  
+
+  /** Update Visual Paradingm */
   static getData(pag,num,prop,value){
     return new Promise((resolve,reject) =>{
       let page = parseInt(pag);
@@ -33,8 +39,10 @@ class ProveedorService {
         }))
         .catch((reason) => reject({ message: reason.message }))
     })
-}
-static getItem(pky){
+  }
+
+  /** Update Visual Paradingm */
+  static getItem(pky){
     return new Promise((resolve,reject) =>{
       Proveedor.findByPk(pky,{
           raw: true,
@@ -43,23 +51,37 @@ static getItem(pky){
         .then((row)=> resolve( row ))
         .catch((reason) => reject({ message: reason.message }))
     })
-}    
-static setUpdate(value,id){
+  }
+  
+  /** Update Visual Paradingm */
+  static setUpdate(value,id){
     return new Promise((resolve,reject) =>{
       Proveedor.update(value, { where: { id: Number(id) } })
         .then((row)=> resolve( row ))
         .catch((reason) => reject({ message: reason.message })) 
     })
-}
+  }
 
-static setAdd(value){
+  /** Update Visual Paradingm */
+  static setAdd(value){
     return new Promise((resolve,reject) =>{
         Proveedor.create(value)
         .then((row) => resolve( row ))
         .catch((reason)  => reject({ message: reason.message }))  
     })
-}  
+  }  
 
+  /** Update Visual Paradingm */
+  static delete(datoId) {
+    return new Promise((resolve, reject) => {
+      Proveedor.destroy({ where: { id: Number(datoId) } })
+        .then((rows) => resolve({ message: 'eliminado' }))
+        .catch((reason)  => reject({ message: reason.message }))      
+    });
+  }
+  
+  
+  /** Update Visual Paradingm */
   static search(prop,value){
     return new Promise((resolve,reject) =>{            
         let iValue = '%' + value + '%'
@@ -87,7 +109,7 @@ static setAdd(value){
      })
    }
 
-   static getTotal(){
+  /*static getTotal(){
     return new Promise((resolve,reject) =>{
       Proveedor.findOne({
           raw:true,
@@ -98,7 +120,7 @@ static setAdd(value){
         .then((row) => resolve( row.total ))
         .catch((reason)  => reject({ message: reason.message }))  
     })
-} 
+} */
     
 }
 export default ProveedorService;

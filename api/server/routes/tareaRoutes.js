@@ -6,5 +6,5 @@ router.post('/lista', TareaController.lista);
 router.post('/', TareaController.add);
 router.get('/:id', TareaController.getItem);
 router.put('/:id/:tipo',TareaController.actualizar)
-
+router.post('/search/lista',TareaController.getDelete)
 export default router;

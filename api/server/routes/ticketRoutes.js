@@ -10,6 +10,6 @@ router.put('/:id/:tipo',TicketController.actualizar)
 router.post('/search/lista',TicketController.search)
 router.post('/:tipo', TicketController.crear);
 
-/*router.get('/list/:name/:value', TicketController.getList);*/ 
+router.post('/data/lista/rango/', TicketController.getLista); 
 router.get('/items/:prop/:orden', TicketController.getItems);
 export default router;

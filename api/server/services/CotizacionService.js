@@ -5,6 +5,43 @@ const { Cotizacion, Cliente, Usuario, NotaCobranza } = database;
 
 class CotizacionService {
 
+   /** Update Visual Paradingm */
+  static delete(id){
+    return new Promise((resolve,reject) =>{
+      Cotizacion.destroy({ where: { id: Number(id) } })
+      .then((cliente) => resolve(cliente))
+      .catch((reason)  => reject(reason));
+    })
+  }
+
+   /** Update Visual Paradingm */
+   static getData(pag,num,usuarioId,rolId){
+    return new Promise((resolve,reject) =>{
+      let page = parseInt(pag);
+      let der = num * page - num;
+        Cotizacion.findAndCountAll({
+          raw: true,
+          nest: true,
+          offset: der,
+          limit: num,
+          order: [['id','desc']],
+          attributes:["id","fechaCotizacion","totalGeneral","observaciones","estado"],              
+          include:[
+            {model:Cliente,as:"cliente",attributes:["id","nombres","email","filename"]}                
+          ]  
+        })
+        .then((rows) => resolve({
+          paginas: Math.ceil(rows.count / num),
+          pagina: page,
+          total: rows.count,
+          data: rows.rows
+        }))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+}
+
+
+
   //Informe Cotizaciones
   static getCotizacionRango(desde,hasta){
     return new Promise((resolve,reject) =>{        
@@ -81,13 +118,7 @@ class CotizacionService {
     })
   }
 
-  static delete(id){
-    return new Promise((resolve,reject) =>{
-      Cotizacion.destroy({ where: { id: Number(id) } })
-      .then((cliente) => resolve(cliente))
-      .catch((reason)  => reject(reason));
-    })
-  }
+  
 
   static search(value,cliente,fecha){
     return new Promise((resolve,reject) =>{            
@@ -111,7 +142,7 @@ class CotizacionService {
             include:[
               { model:Cliente,
                 as:"cliente",
-                attributes:["id","nombres","email"],
+                attributes:["id","nombres","email","filename"],
                 where: { nombres: { [Op.iLike]: iCliente }},
               },
                           
@@ -156,30 +187,7 @@ class CotizacionService {
             .catch((reason) => reject({ message: reason.message }))
         })
     } 
-    static getData(pag,num,usuarioId,rolId){
-        return new Promise((resolve,reject) =>{
-          let page = parseInt(pag);
-          let der = num * page - num;
-            Cotizacion.findAndCountAll({
-              raw: true,
-              nest: true,
-              offset: der,
-              limit: num,
-              order: [['id','desc']],
-              attributes:["id","fechaCotizacion","totalGeneral","observaciones","estado"],              
-              include:[
-                {model:Cliente,as:"cliente",attributes:["id","nombres","email"]}                
-              ]  
-            })
-            .then((rows) => resolve({
-              paginas: Math.ceil(rows.count / num),
-              pagina: page,
-              total: rows.count,
-              data: rows.rows
-            }))
-            .catch((reason) => reject({ message: reason.message }))
-        })
-    }
+    
     static dataUsuario(pag,num,prop,value){
      
         return new Promise((resolve,reject) =>{

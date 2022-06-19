@@ -21,7 +21,7 @@ var upload = multer({ storage: storage }).single('file')
 
 class FilesService {
 
-    static proveedores(req,res) { 
+    static fundempresa(req,res) { 
         return new Promise((resolve, reject) => {
             upload(req, res, function (err) {
               if (err instanceof multer.MulterError) {
@@ -29,13 +29,28 @@ class FilesService {
               } else if (err) {
                 resolve(err)
               }
-              sharp(req.file.path).resize({ height: 300 }).toFile('./api/public/images/proveedores/lg/' + req.file.filename);
-              sharp(req.file.path).resize({ height: 150 }).toFile('./api/public/images/proveedores/md/' + req.file.filename);
-              sharp(req.file.path).resize({ height: 75 }).toFile('./api/public/images/proveedores/sm/' + req.file.filename);
+              sharp(req.file.path).resize({ height: 300 }).toFile('./api/public/images/fundempresa/lg/' + req.file.filename);
+              sharp(req.file.path).resize({ height: 150 }).toFile('./api/public/images/fundempresa/md/' + req.file.filename);
+              sharp(req.file.path).resize({ height: 75 }).toFile('./api/public/images/fundempresa/sm/' + req.file.filename);
               resolve(req.file)
             })
           })
-      }	
+    }	
+    static proveedores(req,res) { 
+      return new Promise((resolve, reject) => {
+          upload(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+              resolve(err)
+            } else if (err) {
+              resolve(err)
+            }
+            sharp(req.file.path).resize({ height: 300 }).toFile('./api/public/images/proveedores/lg/' + req.file.filename);
+            sharp(req.file.path).resize({ height: 150 }).toFile('./api/public/images/proveedores/md/' + req.file.filename);
+            sharp(req.file.path).resize({ height: 75 }).toFile('./api/public/images/proveedores/sm/' + req.file.filename);
+            resolve(req.file)
+          })
+        })
+  }	
     
   static clientes(req,res) {         
     return new Promise((resolve, reject) => {

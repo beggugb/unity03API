@@ -7,7 +7,8 @@ class UsuarioController {
 
   //Revisado 21-05-2022 
   static login(req, res) {
-    const { username, password } = req.body;        
+    const { username, password } = req.body;      
+    console.log(req.body)  
     UsuarioService.login(username, password)
       .then((user) => {          
         if(user.usuario){       

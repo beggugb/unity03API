@@ -73,7 +73,9 @@ module.exports = (sequelize, DataTypes) => {
     pr: DataTypes.INTEGER,
     nm: DataTypes.STRING,
     nv: DataTypes.STRING,
-    subcategoria: DataTypes.STRING
+    subcategoria: DataTypes.STRING,
+    lote: DataTypes.STRING,
+    vencimiento: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Articulo',

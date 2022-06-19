@@ -12,8 +12,73 @@ import ProspectoService from "../services/ProspectoService";
 import TicketService from "../services/TicketService"
 import MovimientoService from "../services/MovimientoService"
 import ComprobanteService from "../services/ComprobanteService";
+import ContratoService from "../services/ContratoService";
+import PersonaService from "../services/PersonaService";
 
 class InformesController {
+
+  /** Update Visual Paradingm */
+  static recursos(req, res) {   
+    const d = new Date()
+    
+    Promise.all([
+     ContratoService.getTotal(d.getFullYear()),
+     PersonaService.getTotal(d.getFullYear()) 
+    ])
+    .then(([icontratos,ipersonas])=>{
+       res.status(200).send({ result : {contratos : icontratos, persona: ipersonas }}) 
+    })
+    .catch((reason)=> {
+        console.log(reason)
+    })    
+  }
+
+  /** Update Visual Paradingm */
+  static estadoCuentas(req,res){
+    const { clienteId } = req.body
+    Promise.all([VentaService.getVentasActivas(clienteId),
+                 ClienteService.getItemSingle(clienteId)])
+      .then(([ventas,cliente])=>{
+        let VentasTotal = 0
+        let PagosTotal = 0
+        let SaldoTotal = 0
+        let detalle = ventas.map((itt)=>{
+          let iok = {
+            "id"            : itt.id,
+            "ventaTotal"    : itt.total,
+            "fechaVenta"    : itt.fechaVenta,
+            "observaciones" : itt.observaciones,
+            "cuotas"        : itt.notacobranza.cuotas,
+            "tipo"          : itt.notacobranza.tipo,
+            "pagoTotal"     : itt.notacobranza.pagoTotal,
+            "saldoTotal"    : itt.notacobranza.saldoTotal
+            }
+            VentasTotal = VentasTotal + parseFloat(itt.notacobranza.montoTotal)
+            PagosTotal  = PagosTotal + parseFloat(itt.notacobranza.pagoTotal)
+            SaldoTotal  = SaldoTotal + parseFloat(itt.notacobranza.saldoTotal)
+            return iok;
+          })
+        res.status(200).send({ result: { item:cliente, data:detalle, total:VentasTotal, pagos:PagosTotal, saldo:SaldoTotal } });     
+      })
+  }
+
+
+
+  static clientcons(req, res) {   
+    const { gestion } = req.body
+    Promise.all([                  
+      ClienteService.getTotal(),
+      CotizacionService.getTotals(gestion),            
+      ProspectoService.getTotals(gestion),
+      TicketService.getTotals(gestion)])
+      .then(([clienteT,cotizacionT,prospectoT,ticketT]) => {         
+        res.status(200).send({ result:{clienteT, cotizacionT, prospectoT, ticketT }});
+      })      
+      .catch((reason) => {        
+        res.status(400).send({ message: reason });
+      });       
+  } 
+
 
   static contabilidad(req, res) {
     const { usuarioId, gestion } = req.body;          
@@ -212,22 +277,7 @@ class InformesController {
 
   } 
 
-  static clientcons(req, res) {   
-    const { gestion } = req.body
-    Promise.all([                  
-      ClienteService.getTotal(),
-      CotizacionService.getTotals(gestion),            
-      ProspectoService.getTotals(gestion),
-      TicketService.getTotals(gestion)])
-    .then(([clienteT,cotizacionT,prospectoT,ticketT]) => {         
-        res.status(200).send({ result:{clienteT, cotizacionT, prospectoT, ticketT }});
-      })      
-      .catch((reason) => {
-        console.log(reason)
-        res.status(400).send({ message: reason });
-      });  
-     
-  } 
+ 
 
 
   static salecons(req, res) {   
@@ -436,33 +486,7 @@ class InformesController {
 
   } 
 
-  static estadoCuentas(req,res){
-      const { clienteId } = req.body
-      Promise.all([VentaService.getVentasActivas(clienteId),ClienteService.getItemSingle(clienteId)])
-        .then(([ventas,cliente])=>{
-          let VentasTotal = 0
-          let PagosTotal = 0
-          let SaldoTotal = 0
-          let detalle = ventas.map((itt)=>{
-            let iok = {
-              "id"            : itt.id,
-              "ventaTotal"    : itt.total,
-              "fechaVenta"    : itt.fechaVenta,
-              "observaciones" : itt.observaciones,
-              "cuotas"        : itt.notacobranza.cuotas,
-              "tipo"          : itt.notacobranza.tipo,
-              "pagoTotal"     : itt.notacobranza.pagoTotal,
-              "saldoTotal"    : itt.notacobranza.saldoTotal
-              }
-              VentasTotal = VentasTotal + parseFloat(itt.notacobranza.montoTotal)
-              PagosTotal  = PagosTotal + parseFloat(itt.notacobranza.pagoTotal)
-              SaldoTotal  = SaldoTotal + parseFloat(itt.notacobranza.saldoTotal)
-              return iok;
-            })
-          res.status(200).send({ result: { item:cliente, data:detalle, total:VentasTotal, pagos:PagosTotal, saldo:SaldoTotal } });     
-        })
 
-  }
 
   static cajas(req, res) {
     const { desde, hasta, usuarioId } = req.body;        

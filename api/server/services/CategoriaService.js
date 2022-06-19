@@ -4,6 +4,29 @@ const Op = Sequelize.Op;
 const { Categoria } = database;
 
 class CategoriaService {
+
+    static getData(pag,num,prop,value){
+        return new Promise((resolve,reject) =>{
+          let page = parseInt(pag);
+          let der = num * page - num;
+            Categoria.findAndCountAll({
+              raw: true,
+              nest: true,
+              offset: der,
+              limit: num,
+              order: [[prop,value]],
+              where: { id: { [Op.gt]: 1 }}, 
+            })
+            .then((rows) => resolve({
+              paginas: Math.ceil(rows.count / num),
+              pagina: page,
+              total: rows.count,
+              data: rows.rows
+            }))
+            .catch((reason) => reject({ message: reason.message }))
+        })
+    }
+
     static getItem(pky){
         return new Promise((resolve,reject) =>{
             Categoria.findByPk(pky,{
@@ -30,26 +53,7 @@ class CategoriaService {
         })
     } 
 
-    static getData(pag,num,prop,value){
-        return new Promise((resolve,reject) =>{
-          let page = parseInt(pag);
-          let der = num * page - num;
-            Categoria.findAndCountAll({
-              raw: true,
-              nest: true,
-              offset: der,
-              limit: num,
-              order: [[prop,value]]
-            })
-            .then((rows) => resolve({
-              paginas: Math.ceil(rows.count / num),
-              pagina: page,
-              total: rows.count,
-              data: rows.rows
-            }))
-            .catch((reason) => reject({ message: reason.message }))
-        })
-    }
+   
 
     static delete(datoId) {
         return new Promise((resolve, reject) => {
@@ -74,19 +78,20 @@ class CategoriaService {
     }
 
     static search(prop,value){
-      return new Promise((resolve,reject) =>{            
-          let iValue = '%' + value + '%'
-          if (value === '--todos--' || value === null || value === '0') { iValue = '%' }            
+      return new Promise((resolve,reject) =>{               
+          let iValue = '%' + value + '%'               
+          if (value === '--todos--' || value === null || value === '0' || value === undefined) { iValue = '%' }            
           Categoria.findAndCountAll({
               raw: true,
               nest: true,
               offset: 0,
-              limit: 12,
+              limit: 15,
               where: { [prop]: { [Op.iLike]: iValue }},
-              order: [[prop,'ASC']]
+              order: [[prop,'ASC']],
+              where: { id: { [Op.gt]: 1 }}, 
           })		
           .then((rows) => resolve({
-              paginas: Math.ceil(rows.count / 12),
+              paginas: Math.ceil(rows.count / 15),
               pagina: 1,
               total: rows.count,
               data: rows.rows

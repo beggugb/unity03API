@@ -4,6 +4,40 @@ import AlmacenItemsService from "../services/AlmacenItemsService"
 
 class CotizacionController { 
 
+     /** Update Visual Paradingm */
+    static getDelete(req, res) {                           
+        CotizacionService.delete(req.params.id)
+            .then((marca) => {                                    
+                CotizacionService.getData(1,20,1,1)
+                .then((data)=>{
+                    let resData = data.data.map((item,index)=>{
+                        let iok = {
+                            "id"               : item.id,   
+                            "fechaCotizacion"  : item.fechaCotizacion,
+                            "tipo"             : item.tipo,
+                            "totalGeneral"     : item.totalGeneral,
+                            "observaciones"    : item.observaciones,
+                            "estado"           : item.estado,
+                            "cliente"          : item.cliente.nombres,
+                            "cliente"          : item.cliente.nombres,
+                            "email"            : item.cliente.email,
+                            "filename"         : item.cliente.filename
+                        }
+                        return iok;
+                        })  
+                        res.status(200).send({message:"cotizacions lista", result: {data: resData, total: data.total, pagina: data.pagina,paginas:data.paginas} });                                              
+                })                
+                .catch((reason) => {       
+                    console.log(reason.detail)           
+                    res.status(400).send({ message: reason });
+                });           
+            })                   
+            .catch((reason) => {                  
+              /*console.log(reason.parent.detail)                               */
+              res.status(400).send({ message: reason.parent.detail });
+            });         
+    }
+     /** Update Visual Paradingm */
     static getItems(req, res) {                   
         CotizacionService.getItems(req.params.prop,req.params.orden)
             .then((cotizaciones) => {                
@@ -66,7 +100,7 @@ class CotizacionController {
         }
         CotizacionService.setAdd(xiok)
             .then((cotizacion) => {                                  
-                CotizacionService.getData(1,15,usuarioId,rolId)
+                CotizacionService.getData(1,20,usuarioId,rolId)
                     .then((data)=>{
                         let resData = data.data.map((item,index)=>{
                             let iok = {
@@ -76,7 +110,10 @@ class CotizacionController {
                                 "totalGeneral"     : item.totalGeneral,
                                 "observaciones"    : item.observaciones,
                                 "estado"           : item.estado,
-                                "cliente"          : item.cliente.nombres
+                                "cliente"          : item.cliente.nombres,
+                                "cliente"          : item.cliente.nombres,
+                                "email"            : item.cliente.email,
+                                "filename"         : item.cliente.filename
                             }
                             return iok;
                             })  
@@ -114,7 +151,8 @@ class CotizacionController {
                         "observaciones"    : item.observaciones,
                         "estado"           : item.estado,
                         "cliente"          : item.cliente.nombres, 
-                        "email"            : item.cliente.email
+                        "email"            : item.cliente.email,
+                        "filename"         : item.cliente.filename
                     }
                 return iok;
                 })  
@@ -139,7 +177,8 @@ class CotizacionController {
                             "observaciones"    : item.observaciones,
                             "estado"           : item.estado,
                             "cliente"          : item.cliente.nombres,
-                            "email"            : item.cliente.email                            
+                            "email"            : item.cliente.email,
+                            "filename"         : item.cliente.filename         
                         }
                     return iok;
                     })  
@@ -192,7 +231,7 @@ class CotizacionController {
             .then((yitems)=>{                                                  
                 CotizacionService.delete(req.params.id)
                     .then((yitem)=>{
-                        CotizacionService.getData(1,15,usuarioId, rolId)
+                        CotizacionService.getData(1,20,usuarioId, rolId)
                             .then((data)=>{
                                 let resData = data.data.map((item,index)=>{
                                     let iok = {

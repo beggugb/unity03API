@@ -43,15 +43,23 @@ import unidades from './unidadRoutes'
 import mobil from './mobilRoutes'
 import movimientos from './movimientoRoutes'
 import fichas from './fichaRoutes'
+import evaluacion from './evaluacionRoutes'
+import evaluacionp from './evaluacionpRoutes'
+import departamento from './departamentoRoutes'
+import registro from './registroRoutes'
 
 export default(app) => {    
-    app.use('/api/usuarios',usuarios);          
+    app.use('/api/usuarios',usuarios);   
+    app.use('/api/evaluaciones',evaluacion);       
     app.use('/api/compras',KeyToken,compras);
+    app.use('/api/evaluacionesp',evaluacionp);
+    app.use('/api/departamentos',departamento);
+    app.use('/api/registros',registro);
     app.use('/api/fichas',fichas);
     app.use('/api/ventas',KeyToken,ventas);
     app.use('/api/movimientos',KeyToken,movimientos);
     app.use('/api/notas',KeyToken,notas);
-    app.use('/api/empresas',KeyToken,empresas);
+    app.use('/api/empresas',empresas);
     app.use('/api/procesos',KeyToken,proceso);    
     app.use('/api/unidades',KeyToken,unidades);
     app.use('/api/clientes',KeyToken,clientes);
@@ -66,7 +74,7 @@ export default(app) => {
     app.use('/api/tpv',tpv);
     app.use('/api/cajas',cajas);
     app.use('/api/cajasitems',KeyToken,cajasitems);    
-    app.use('/api/cotizaciones',KeyToken,cotizacion);    
+    app.use('/api/cotizaciones',cotizacion);    
     app.use('/api/almacenes',almacenes);
     app.use('/api/proveedores',proveedores);
     app.use('/api/files',KeyToken,files);
@@ -77,13 +85,13 @@ export default(app) => {
     app.use('/api/contabilidad',KeyToken,contabilidad);    
     app.use('/api/tdcs',KeyToken,tdc);
     app.use('/api/tareas',KeyToken,tarea);
-    app.use('/api/tickets',KeyToken,ticket);
+    app.use('/api/tickets',ticket);
     app.use('/api/ticketsitem',KeyToken,ticketitem);
-    app.use('/api/personas',KeyToken,personas);
-    app.use('/api/horarios',KeyToken,horarios);
-    app.use('/api/salarios',KeyToken,salarios);
+    app.use('/api/personas',personas);
+    app.use('/api/horarios',horarios);
+    app.use('/api/salarios',salarios);
     app.use('/api/contratos',KeyToken,contratos);
-    app.use('/api/cargos',KeyToken,cargos);
+    app.use('/api/cargos',cargos);
     app.use('/api/prospectos',KeyToken,prospectos);
     app.use('/api/prospectosc',KeyToken,prospectosc);
     app.use('/api/estudios',KeyToken,estudios);

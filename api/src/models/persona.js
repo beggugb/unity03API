@@ -24,7 +24,11 @@ module.exports = (sequelize, DataTypes) => {
     celular: DataTypes.STRING,
     pais: DataTypes.STRING,
     ciudad: DataTypes.STRING,
-    filename: DataTypes.STRING
+    filename: DataTypes.STRING,
+    web: DataTypes.STRING,
+    codigo: DataTypes.STRING,
+    tipo: DataTypes.STRING,
+    observaciones: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Persona',

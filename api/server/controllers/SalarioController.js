@@ -39,8 +39,13 @@ class SalarioController {
             });         
       }
     
-      static actualizar(req, res) {                           
-        SalarioService.setUpdate(req.body,req.params.id)
+      static actualizar(req, res) {         
+        let deto = req.body
+        deto.montoDia    = parseFloat(deto.monto / 25).toFixed(2)        
+        deto.montoHora   = parseFloat(deto.montoDia / 8).toFixed(2)
+        deto.montoMinutos = parseFloat(deto.montoHora / 60).toFixed(2)  
+
+        SalarioService.setUpdate(deto,req.params.id)
             .then((xsalario) => {                
                 SalarioService.getData(1,15,'id','asc')
                 .then((salarios) => {                
@@ -88,7 +93,12 @@ class SalarioController {
 
 
     static crear(req, res) {           
-        SalarioService.setAdd(req.body)
+      let deto = req.body
+        deto.montoDia    = parseFloat(deto.monto / 25).toFixed(2)        
+        deto.montoHora   = parseFloat(deto.montoDia / 8).toFixed(2)
+        deto.montoMinutos = parseFloat(deto.montoHora / 60).toFixed(2)   
+      
+        SalarioService.setAdd(deto)
             .then((salario)=>{
               SalarioService.getData(1,15,'id','asc')
               .then((salarios) => {                

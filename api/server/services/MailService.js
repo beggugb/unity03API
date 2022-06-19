@@ -36,8 +36,10 @@ class MailService {
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
             resolve({ mail: error });
+            console.log('error')
           }
-          resolve({ mail: "ok" });
+            resolve({ mail: "ok" });
+            console.log('OK')
         });
       });
 } 
@@ -79,13 +81,16 @@ class MailService {
 } 
     static sendCotizacion(cotizacionId,empresa,nombres,email) {                     
       return new Promise((resolve, reject) => {
+        console.log('pppppppppppppppp')
             let transporter = nodeMailer.createTransport({
               host: empresa.smtpHost,
               port: empresa.smtpPort,
               secure: true,
               auth: {
-                user: empresa.smtpUser,
-                pass: empresa.smtpPassword,
+                type: "OAuth2",
+                user: "beggugb@gmail.com",
+                /*pass: empresa.smtpPassword,*/
+                acessToken: "AIzaSyBgn5cikNXqespQM5jgGbCF2qmnhOkE3MY"
               },
             });
             
@@ -105,10 +110,12 @@ class MailService {
                 }] 
             };
         
-            transporter.sendMail(mailOptions, (error, info) => {
+            transporter.sendMail(mailOptions, (error, info) => {              
               if (error) {
+                console.log(error)
                resolve({ mail: error });
               }else{
+                console.log('ok')
                 resolve({ mail: "ok" });
               }              
             });

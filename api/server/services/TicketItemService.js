@@ -5,6 +5,27 @@ const { TicketItem } = database;
 
 class TicketItemService {
 
+    /** Update Visual Paradingm */
+    static delete(datoId) {
+        return new Promise((resolve, reject) => {
+            TicketItem.destroy({ where: { id: Number(datoId) } })
+            .then((rows) => resolve({ message: 'eliminado' }))
+            .catch((reason)  => reject({ message: reason.message }))      
+        });
+    }
+
+    /** Update Visual Paradingm */
+    static getItem(pky){
+        return new Promise((resolve,reject) =>{
+            TicketItem.findByPk(pky,{
+              raw: true,
+              nest: true
+            })
+            .then((row)=> resolve( row.ticketId ))
+            .catch((reason) => reject({ message: reason.message }))
+        })
+    } 
+
     static setAdd(dato){                
         return new Promise((resolve,reject) =>{
             TicketItem.create(dato)

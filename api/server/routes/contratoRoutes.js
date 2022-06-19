@@ -8,6 +8,7 @@ router.get('/item/:id',ContratoController.getItem)
 router.get('/item/copiar/:id',ContratoController.setCopiar)
 router.delete('/:id/:tipo',ContratoController.getDelete)
 router.put('/:id/:tipo',ContratoController.actualizar)
+router.put('/aprobar/:id/:tipo', ContratoController.aprobar);
 router.post('/search/lista',ContratoController.search)
 /** Compuestos */
 router.post('/:tipo', ContratoController.crear);

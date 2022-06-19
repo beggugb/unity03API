@@ -2,6 +2,18 @@ import CategoriaService from "../services/CategoriaService";
 
 class CategoriaController {  
 
+     /** Update Visual Paradingm */
+    static search(req, res) {  
+    const { prop, value } = req.body          
+      CategoriaService.search(prop, value)
+        .then((data) => {                          
+          res.status(200).send({message:"categorias lista", result: data });            
+        })                   
+        .catch((reason) => {                            
+          res.status(400).send({ message: reason });
+        });         
+    }
+
     static getDelete(req, res) {                           
         CategoriaService.delete(req.params.id)
             .then((categoria) => {                                    
@@ -15,16 +27,7 @@ class CategoriaController {
             });         
       }
 
-    static search(req, res) {  
-        const { prop, value } = req.body                         
-        CategoriaService.search(prop, value)
-            .then((data) => {                          
-              res.status(200).send({message:"categorias lista", result: data });            
-            })                   
-            .catch((reason) => {                            
-              res.status(400).send({ message: reason });
-            });         
-      }
+    
     
       static actualizar(req, res) {                           
         CategoriaService.setUpdate(req.body,req.params.id)

@@ -5,6 +5,41 @@ const { Contrato, Persona, Horario, Salario, Cargo } = database;
 
 class ContratoService {
 
+  static getTotal(gestion){
+    return new Promise((resolve,reject)=>{
+      console.log(gestion)
+      Contrato.findAll({
+        raw:true,
+        nest:true,
+        where:{gestion: gestion},
+        attributes:['estado',
+        [Sequelize.fn('count',Sequelize.col('id')),'total']],
+        group:['estado']        
+      })
+      .then((row) => resolve(row))
+      .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
+  static verificarLista(){
+    return new Promise((resolve,reject) =>{
+      let d     = new Date()
+      let fecha = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
+      
+        Contrato.findAll({
+          raw: true,
+          nest: true,
+          attributes:["id","fechaInicio","fechaFin","cargoId","personaId"],
+          where: {[Op.and]: [
+            { fechaFin: { [Op.gte]: fecha}},            
+            { estado : true}
+           ]},
+        })
+        .then((row)=> resolve( row ))
+        .catch((reason) => reject({ message: reason.message }))
+    })
+  }
+
   static verificar(personaId){
     return new Promise((resolve,reject) =>{
       let d     = new Date()
@@ -21,7 +56,45 @@ class ContratoService {
         .then((row)=> resolve( row ))
         .catch((reason) => reject({ message: reason.message }))
     })
+  }
+
+  static verificarVigencia(personaId){
+    return new Promise((resolve,reject) =>{
+      let d     = new Date()
+      let fecha = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
+        Contrato.findOne({
+          raw: true,
+          nest: true,
+          include:[
+            {model:Salario,as:"salario",attributes:["id","nombre","monto","montoMinutos"]},            
+            {model:Cargo,as:"cargo",attributes:["id","nombre","departamentoId"]}
+          ], 
+          where: {[Op.and]: [
+            { fechaFin: { [Op.gte]: fecha}},            
+            { personaId: personaId},
+           ]},
+        })
+        .then((row)=> resolve( row ))
+        .catch((reason) => reject({ message: reason.message }))
+    })
  }
+ static verificar(personaId){
+  return new Promise((resolve,reject) =>{
+    let d     = new Date()
+    let fecha = (new Date(d + 'UTC')).toISOString().replace(/-/g, '-').split('T')[0] 
+      Contrato.findOne({
+        raw: true,
+        nest: true,
+        attributes:["id","fechaInicio","fechaFin"],
+        where: {[Op.and]: [
+          { fechaFin: { [Op.lte]: fecha}},            
+          { personaId: personaId},
+         ]},
+      })
+      .then((row)=> resolve( row ))
+      .catch((reason) => reject({ message: reason.message }))
+  })
+}
  static setAdd(value){
   return new Promise((resolve,reject) =>{
       Contrato.create(value)

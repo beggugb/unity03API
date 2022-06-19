@@ -19,12 +19,17 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'sucursalId',
         as: 'sucursal',
       });
+      Cargo.belongsTo(models.Departamento, {
+        foreignKey: 'departamentoId',
+        as: 'departamento',
+      });
     }
   };
   Cargo.init({
     nombre: DataTypes.STRING,
     salarioId: DataTypes.INTEGER,
-    sucursalId: DataTypes.INTEGER
+    sucursalId: DataTypes.INTEGER,
+    departamentoId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Cargo',

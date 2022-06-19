@@ -3,6 +3,12 @@ import InformesController from '../controllers/InformesController';
 
 const router = Router();
 
+/** Update Visual Paradingm */
+router.post('/clientcons',InformesController.clientcons)
+router.post('/clientrango',InformesController.clientrango)
+
+//Recursos Humanos
+router.post('/recursos',InformesController.recursos)
 
 //Compras
 router.post('/buycons',InformesController.buycons)
@@ -16,9 +22,6 @@ router.post('/salerango',InformesController.salerango)
 //Cobros
 router.post('/chargerango',InformesController.chargerango)
 
-//Clientes
-router.post('/clientcons',InformesController.clientcons)
-router.post('/clientrango',InformesController.clientrango)
 
 //Cotizaciones
 router.post('/cotizacionrango',InformesController.cotizacionrango)

@@ -4,6 +4,7 @@ import FileController from '../controllers/FileController';
 const router = Router();
 router.put('/articulo/item/:id', FileController.articulos);
 router.put('/proveedor/item/:id', FileController.proveedores);
+router.put('/fundempresa/item/:id', FileController.fundempresa);
 router.put('/cliente/item/:id', FileController.clientes);
 router.put('/clientenit/item/:id', FileController.clientesNit);
 router.put('/clienteci/item/:id', FileController.clientesCi);

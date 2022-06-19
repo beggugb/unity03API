@@ -19,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   Tarea.init({
     title: DataTypes.STRING,
-    start: DataTypes.DATE,
-    end: DataTypes.DATE,
+    start: DataTypes.STRING,
+    end: DataTypes.STRING,
     classNames: DataTypes.STRING,
     backgroundColor: DataTypes.STRING,
     detalle: DataTypes.STRING,

@@ -79,7 +79,7 @@ class UnidadService {
     static search(prop,value){
       return new Promise((resolve,reject) =>{            
           let iValue = '%' + value + '%'
-          if (value === '--todos--' || value === null || value === '0') { iValue = '%' }            
+          if (value === '--todos--' || value === null || value === '0' || value === undefined) { iValue = '%' }            
           Unidad.findAndCountAll({
               raw: true,
               nest: true,

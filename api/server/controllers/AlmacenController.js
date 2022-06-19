@@ -1,8 +1,9 @@
 import AlmacenItemsService from "../services/AlmacenItemsService";
 import AlmacenService from "../services/AlmacenService";
 
-class AlmacenController {  
-
+class AlmacenController { 
+    
+    /** Update Visual Paradingm */
     static getData(req, res) {                           
         AlmacenService.getData(req.params.pagina,req.params.num,req.params.prop,req.params.orden)
             .then((almacens) => {                
@@ -12,18 +13,17 @@ class AlmacenController {
               res.status(400).send({ message: reason });
         });         
     }
-    
+    /** Update Visual Paradingm */
     static getItem(req, res) {                           
         AlmacenService.getItem(req.params.id)
             .then((almacen) => {                
                 res.status(200).send({message:"almacen item", result: almacen });                                               
             })                   
-            .catch((reason) => {              
-             
-              res.status(400).send({ message: reason });
+            .catch((reason) => {    
+                res.status(400).send({ message: reason });
         });         
     }   
-    
+    /** Update Visual Paradingm */
     static getDelete(req, res) {                           
         AlmacenService.delete(req.params.id)
             .then((almacen) => {                                    
@@ -35,7 +35,8 @@ class AlmacenController {
             .catch((reason) => {                        
                   res.status(400).send({ message: reason });
         });         
-      }
+    }
+    /** Update Visual Paradingm */  
     static actualizar(req, res) {                           
         AlmacenService.setUpdate(req.body,req.params.id)
             .then((xalmacen) => {                
@@ -48,6 +49,8 @@ class AlmacenController {
               res.status(400).send({ message: reason });
         });         
     }
+
+    /** Update Visual Paradingm */ 
     static crear(req, res) {           
         AlmacenService.setAdd(req.body)
             .then((almacen)=>{
@@ -61,7 +64,7 @@ class AlmacenController {
         });         
     } 
     
-
+    /** Update Visual Paradingm */ 
     static getList(req, res) {                   
         AlmacenService.getItems(req.params.name,req.params.value)
             .then((almacenes) => {                
@@ -71,7 +74,8 @@ class AlmacenController {
               res.status(400).send({ message: reason });
             });         
     }
-
+    
+    /** Update Visual Paradingm */ 
     static listaStock(req, res) {   
         const { pagina, num, name, codigo, almacenId, categoriaId, stock } = req.body                          
         AlmacenItemsService.getData(pagina,num,name, codigo, almacenId, categoriaId, stock)
